@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
+  <!-- ==================================================
+       MANAGEX — APPLICATION ENTRY
+       PHASE 2 — PROFESSIONAL APP SHELL
+       ================================================== -->
+
   <meta charset="UTF-8">
 
   <meta
@@ -20,70 +27,979 @@
 
   <title>ManageX</title>
 
-  <!-- ManageX stylesheet -->
+  <!-- ==================================================
+       STYLESHEET
+       ================================================== -->
+
   <link rel="stylesheet" href="style.css">
+
 </head>
+
 
 <body>
 
   <!-- ==================================================
-       MANAGEX APPLICATION ROOT
+       MANAGEX APP
        ================================================== -->
 
   <div id="app">
 
-    <!-- HEADER -->
+
+    <!-- ==================================================
+         TOP HEADER
+         ================================================== -->
+
     <header class="app-header">
 
       <div class="brand">
 
-        <div class="brand-logo">
+        <!-- Temporary CSS logo.
+             Real SVG logo will be connected later. -->
+
+        <div class="brand-logo" aria-hidden="true">
           MX
         </div>
 
-        <div class="brand-name">
-          Manage<span>X</span>
+        <div class="brand-text">
+
+          <div class="brand-name">
+            Manage<span>X</span>
+          </div>
+
+          <div class="brand-subtitle">
+            Business Management
+          </div>
+
         </div>
 
       </div>
 
+
+      <!-- Notification button -->
+
+      <button
+        class="icon-button"
+        id="notificationBtn"
+        type="button"
+        aria-label="Notifications"
+      >
+
+        <svg
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+
+          <path
+            d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"
+          />
+
+        </svg>
+
+      </button>
+
     </header>
 
 
-    <!-- MAIN CONTENT -->
+
+    <!-- ==================================================
+         MAIN APPLICATION
+         ================================================== -->
+
     <main class="main-content">
 
-      <section class="welcome-card">
 
-        <div class="eyebrow">
-          BUSINESS MANAGEMENT
+      <!-- ==================================================
+           DASHBOARD PAGE
+           ================================================== -->
+
+      <section
+        id="dashboardPage"
+        class="app-page active-page"
+      >
+
+        <!-- Dashboard greeting -->
+
+        <div class="page-heading">
+
+          <div>
+
+            <p class="eyebrow">
+              OVERVIEW
+            </p>
+
+            <h1>
+              Good morning
+            </h1>
+
+            <p class="page-description">
+              Here's what's happening with your business.
+            </p>
+
+          </div>
+
         </div>
 
-        <h1>
-          ManageX
-        </h1>
 
-        <p class="tagline">
-          Manage your business. Your way.
-        </p>
+
+        <!-- ==================================================
+             QUICK ACTION
+             ================================================== -->
 
         <button
-          id="startBtn"
-          class="primary-button"
+          id="newOrderBtn"
+          class="new-order-card"
           type="button"
         >
-          Get Started
+
+          <div class="new-order-icon">
+
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+
+              <path d="M12 5v14M5 12h14" />
+
+            </svg>
+
+          </div>
+
+          <div class="new-order-content">
+
+            <strong>
+              Create New Order
+            </strong>
+
+            <span>
+              Add a customer and start an order
+            </span>
+
+          </div>
+
+          <svg
+            class="arrow-icon"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+
+            <path d="m9 18 6-6-6-6" />
+
+          </svg>
+
         </button>
+
+
+
+        <!-- ==================================================
+             BUSINESS SUMMARY
+             ================================================== -->
+
+        <div class="section-header">
+
+          <h2>
+            Business Overview
+          </h2>
+
+        </div>
+
+
+        <div class="stats-grid">
+
+
+          <!-- Total Orders -->
+
+          <article class="stat-card">
+
+            <div class="stat-icon purple">
+
+              <svg viewBox="0 0 24 24">
+
+                <path
+                  d="M6 3h12v18H6zM9 7h6M9 11h6M9 15h4"
+                />
+
+              </svg>
+
+            </div>
+
+            <span class="stat-label">
+              Total Orders
+            </span>
+
+            <strong class="stat-value">
+              0
+            </strong>
+
+          </article>
+
+
+
+          <!-- Pending Orders -->
+
+          <article class="stat-card">
+
+            <div class="stat-icon orange">
+
+              <svg viewBox="0 0 24 24">
+
+                <circle cx="12" cy="12" r="8" />
+
+                <path d="M12 8v5l3 2" />
+
+              </svg>
+
+            </div>
+
+            <span class="stat-label">
+              Pending
+            </span>
+
+            <strong class="stat-value">
+              0
+            </strong>
+
+          </article>
+
+
+
+          <!-- Completed Orders -->
+
+          <article class="stat-card">
+
+            <div class="stat-icon green">
+
+              <svg viewBox="0 0 24 24">
+
+                <path d="m5 12 4 4L19 6" />
+
+              </svg>
+
+            </div>
+
+            <span class="stat-label">
+              Completed
+            </span>
+
+            <strong class="stat-value">
+              0
+            </strong>
+
+          </article>
+
+
+
+          <!-- Total Sales -->
+
+          <article class="stat-card">
+
+            <div class="stat-icon blue">
+
+              <svg viewBox="0 0 24 24">
+
+                <path d="M12 3v18M16 7c0-2-2-3-4-3s-4 1-4 3 2 3 4 3 4 1 4 3-2 3-4 3-4-1-4-3" />
+
+              </svg>
+
+            </div>
+
+            <span class="stat-label">
+              Total Sales
+            </span>
+
+            <strong class="stat-value">
+              ₹0
+            </strong>
+
+          </article>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             PAYMENT SUMMARY
+             ================================================== -->
+
+        <div class="payment-card">
+
+          <div class="payment-heading">
+
+            <div>
+
+              <span>
+                Payment Summary
+              </span>
+
+              <strong>
+                ₹0
+              </strong>
+
+            </div>
+
+            <span class="payment-period">
+              All time
+            </span>
+
+          </div>
+
+
+          <div class="payment-progress">
+
+            <div
+              class="payment-progress-received"
+              style="width: 0%"
+            ></div>
+
+          </div>
+
+
+          <div class="payment-legend">
+
+            <div>
+
+              <span class="legend-dot received"></span>
+
+              <span>
+                Received
+              </span>
+
+              <strong>
+                ₹0
+              </strong>
+
+            </div>
+
+
+            <div>
+
+              <span class="legend-dot pending"></span>
+
+              <span>
+                Pending
+              </span>
+
+              <strong>
+                ₹0
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- ==================================================
+             RECENT ORDERS
+             ================================================== -->
+
+        <div class="section-header">
+
+          <h2>
+            Recent Orders
+          </h2>
+
+          <button
+            id="viewOrdersBtn"
+            class="text-button"
+            type="button"
+          >
+            View all
+          </button>
+
+        </div>
+
+
+        <div
+          id="recentOrders"
+          class="empty-state"
+        >
+
+          <div class="empty-icon">
+
+            <svg viewBox="0 0 24 24">
+
+              <path d="M6 3h12v18H6zM9 7h6M9 11h6M9 15h4" />
+
+            </svg>
+
+          </div>
+
+          <strong>
+            No orders yet
+          </strong>
+
+          <span>
+            Your latest orders will appear here.
+          </span>
+
+        </div>
 
       </section>
 
+
+
+      <!-- ==================================================
+           ORDERS PAGE
+           ================================================== -->
+
+      <section
+        id="ordersPage"
+        class="app-page"
+      >
+
+        <div class="page-heading">
+
+          <div>
+
+            <p class="eyebrow">
+              MANAGEMENT
+            </p>
+
+            <h1>
+              Orders
+            </h1>
+
+            <p class="page-description">
+              Track and manage every order.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="filter-row">
+
+          <button class="filter-chip active">
+            All
+          </button>
+
+          <button class="filter-chip">
+            Pending
+          </button>
+
+          <button class="filter-chip">
+            Completed
+          </button>
+
+        </div>
+
+
+        <div class="empty-state">
+
+          <div class="empty-icon">
+
+            <svg viewBox="0 0 24 24">
+
+              <path d="M6 3h12v18H6zM9 7h6M9 11h6M9 15h4" />
+
+            </svg>
+
+          </div>
+
+          <strong>
+            No orders
+          </strong>
+
+          <span>
+            Create your first order to see it here.
+          </span>
+
+          <button
+            class="small-primary-button"
+            type="button"
+            data-action="new-order"
+          >
+            Create Order
+          </button>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- ==================================================
+           CUSTOMERS PAGE
+           ================================================== -->
+
+      <section
+        id="customersPage"
+        class="app-page"
+      >
+
+        <div class="page-heading">
+
+          <div>
+
+            <p class="eyebrow">
+              RELATIONSHIPS
+            </p>
+
+            <h1>
+              Customers
+            </h1>
+
+            <p class="page-description">
+              Keep your customer information organized.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="search-box">
+
+          <svg viewBox="0 0 24 24">
+
+            <circle cx="11" cy="11" r="7" />
+
+            <path d="m20 20-4-4" />
+
+          </svg>
+
+          <input
+            type="search"
+            placeholder="Search customers"
+            aria-label="Search customers"
+          >
+
+        </div>
+
+
+        <div class="empty-state">
+
+          <div class="empty-icon">
+
+            <svg viewBox="0 0 24 24">
+
+              <circle cx="12" cy="8" r="4" />
+
+              <path d="M4 21c0-4 3-7 8-7s8 3 8 7" />
+
+            </svg>
+
+          </div>
+
+          <strong>
+            No customers yet
+          </strong>
+
+          <span>
+            Customers will appear here after you create an order.
+          </span>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- ==================================================
+           PRODUCTS PAGE
+           ================================================== -->
+
+      <section
+        id="productsPage"
+        class="app-page"
+      >
+
+        <div class="page-heading">
+
+          <div>
+
+            <p class="eyebrow">
+              CATALOG
+            </p>
+
+            <h1>
+              Products & Services
+            </h1>
+
+            <p class="page-description">
+              Customize what your business offers.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <button
+          class="action-card"
+          type="button"
+          data-action="add-product"
+        >
+
+          <div class="action-icon">
+
+            <svg viewBox="0 0 24 24">
+
+              <path d="M12 5v14M5 12h14" />
+
+            </svg>
+
+          </div>
+
+          <div>
+
+            <strong>
+              Add Product or Service
+            </strong>
+
+            <span>
+              Add items, prices and categories.
+            </span>
+
+          </div>
+
+          <svg
+            class="arrow-icon"
+            viewBox="0 0 24 24"
+          >
+
+            <path d="m9 18 6-6-6-6" />
+
+          </svg>
+
+        </button>
+
+
+        <div class="empty-state">
+
+          <div class="empty-icon">
+
+            <svg viewBox="0 0 24 24">
+
+              <path d="M5 7h14M5 12h14M5 17h14" />
+
+            </svg>
+
+          </div>
+
+          <strong>
+            Your catalog is empty
+          </strong>
+
+          <span>
+            Add your first product or service.
+          </span>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- ==================================================
+           SETTINGS PAGE
+           ================================================== -->
+
+      <section
+        id="settingsPage"
+        class="app-page"
+      >
+
+        <div class="page-heading">
+
+          <div>
+
+            <p class="eyebrow">
+              CONFIGURATION
+            </p>
+
+            <h1>
+              Settings
+            </h1>
+
+            <p class="page-description">
+              Configure ManageX for your business.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="settings-list">
+
+
+          <button class="settings-item" type="button">
+
+            <div class="settings-icon">
+
+              <svg viewBox="0 0 24 24">
+
+                <circle cx="12" cy="8" r="4" />
+
+                <path d="M4 21c0-4 3-7 8-7s8 3 8 7" />
+
+              </svg>
+
+            </div>
+
+            <div>
+
+              <strong>
+                Business Profile
+              </strong>
+
+              <span>
+                Name, owner, contact and address
+              </span>
+
+            </div>
+
+            <svg class="arrow-icon" viewBox="0 0 24 24">
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+
+          </button>
+
+
+
+          <button class="settings-item" type="button">
+
+            <div class="settings-icon">
+
+              <svg viewBox="0 0 24 24">
+
+                <path d="M5 7h14M5 12h14M5 17h14" />
+
+              </svg>
+
+            </div>
+
+            <div>
+
+              <strong>
+                Products & Services
+              </strong>
+
+              <span>
+                Manage your catalog
+              </span>
+
+            </div>
+
+            <svg class="arrow-icon" viewBox="0 0 24 24">
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+
+          </button>
+
+
+
+          <button class="settings-item" type="button">
+
+            <div class="settings-icon">
+
+              <svg viewBox="0 0 24 24">
+
+                <circle cx="12" cy="12" r="3" />
+
+                <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.8 1.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-2.5V20a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1-1.8-1.8.1-.1A1.7 1.7 0 0 0 8 15a1.7 1.7 0 0 0-1.6-1H6v-2.5h.2A1.7 1.7 0 0 0 8 10a1.7 1.7 0 0 0-.3-1.9l-.1-.1 1.8-1.8.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6v-.2h2.5V5a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1 1.8 1.8-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2V14h-.2a1.7 1.7 0 0 0-1.6 1Z" />
+
+              </svg>
+
+            </div>
+
+            <div>
+
+              <strong>
+                App Settings
+              </strong>
+
+              <span>
+                Orders, bills and appearance
+              </span>
+
+            </div>
+
+            <svg class="arrow-icon" viewBox="0 0 24 24">
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+
+          </button>
+
+
+
+          <button class="settings-item" type="button">
+
+            <div class="settings-icon">
+
+              <svg viewBox="0 0 24 24">
+
+                <path d="M12 3v18M16 7c0-2-2-3-4-3s-4 1-4 3 2 3 4 3 4 1 4 3-2 3-4 3-4-1-4-3" />
+
+              </svg>
+
+            </div>
+
+            <div>
+
+              <strong>
+                Subscription
+              </strong>
+
+              <span>
+                Plans and premium features
+              </span>
+
+            </div>
+
+            <svg class="arrow-icon" viewBox="0 0 24 24">
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+
+          </button>
+
+        </div>
+
+      </section>
+
+
     </main>
+
+
+
+    <!-- ==================================================
+         BOTTOM NAVIGATION
+         ================================================== -->
+
+    <nav
+      class="bottom-navigation"
+      aria-label="Main navigation"
+    >
+
+
+      <!-- Dashboard -->
+
+      <button
+        class="nav-item active"
+        data-page="dashboardPage"
+        type="button"
+      >
+
+        <svg viewBox="0 0 24 24">
+
+          <path d="M4 13h6V4H4zM14 20h6v-9h-6zM14 9h6V4h-6zM4 20h6v-3H4z" />
+
+        </svg>
+
+        <span>
+          Home
+        </span>
+
+      </button>
+
+
+
+      <!-- Orders -->
+
+      <button
+        class="nav-item"
+        data-page="ordersPage"
+        type="button"
+      >
+
+        <svg viewBox="0 0 24 24">
+
+          <path d="M6 3h12v18H6zM9 7h6M9 11h6M9 15h4" />
+
+        </svg>
+
+        <span>
+          Orders
+        </span>
+
+      </button>
+
+
+
+      <!-- Customers -->
+
+      <button
+        class="nav-item"
+        data-page="customersPage"
+        type="button"
+      >
+
+        <svg viewBox="0 0 24 24">
+
+          <circle cx="12" cy="8" r="4" />
+
+          <path d="M4 21c0-4 3-7 8-7s8 3 8 7" />
+
+        </svg>
+
+        <span>
+          Customers
+        </span>
+
+      </button>
+
+
+
+      <!-- Products -->
+
+      <button
+        class="nav-item"
+        data-page="productsPage"
+        type="button"
+      >
+
+        <svg viewBox="0 0 24 24">
+
+          <path d="M5 7h14M5 12h14M5 17h14" />
+
+        </svg>
+
+        <span>
+          Products
+        </span>
+
+      </button>
+
+
+
+      <!-- Settings -->
+
+      <button
+        class="nav-item"
+        data-page="settingsPage"
+        type="button"
+      >
+
+        <svg viewBox="0 0 24 24">
+
+          <circle cx="12" cy="12" r="3" />
+
+          <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.8 1.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-2.5V20a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1-1.8-1.8.1-.1A1.7 1.7 0 0 0 8 15a1.7 1.7 0 0 0-1.6-1H6v-2.5h.2A1.7 1.7 0 0 0 8 10a1.7 1.7 0 0 0-.3-1.9l-.1-.1 1.8-1.8.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6v-.2h2.5V5a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1 1.8 1.8-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2V14h-.2a1.7 1.7 0 0 0-1.6 1Z" />
+
+        </svg>
+
+        <span>
+          Settings
+        </span>
+
+      </button>
+
+    </nav>
+
 
   </div>
 
 
-  <!-- ManageX application JavaScript -->
+  <!-- ==================================================
+       APPLICATION JAVASCRIPT
+       ================================================== -->
+
   <script src="app.js"></script>
 
 </body>
-</html>
+
+            </html>
