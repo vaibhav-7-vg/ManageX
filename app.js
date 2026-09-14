@@ -1,277 +1,40 @@
-"use strict";
-const MANAGEX={version:"1.0.0",storageKey:"managex_data",configVersion:"1.0.0"};
-const BUSINESS_CONFIG={
-"general-store":{name:"General Store",catalog:["Groceries","Household Items","Personal Care"],features:{delivery:true,advance:true,notes:true,measurements:false,gst:true}},
-"supermarket":{name:"Supermarket",catalog:["Groceries","Beverages","Household Items","Personal Care"],features:{delivery:true,advance:true,notes:true,measurements:false,gst:true}},
-"clothing-fashion":{name:"Clothing & Fashion",catalog:["Shirt","Pant","T-Shirt","Jeans","Dress"],features:{delivery:false,advance:true,notes:true,measurements:false,gst:true}},
-"footwear":{name:"Footwear",catalog:["Shoes","Sandals","Slippers","Sports Shoes"],features:{delivery:false,advance:true,notes:true,measurements:false,gst:true}},
-"electronics":{name:"Electronics",catalog:["Mobile","Television","Speaker","Accessories"],features:{delivery:false,advance:true,notes:true,measurements:false,gst:true}},
-"mobile-accessories":{name:"Mobile & Accessories",catalog:["Mobile","Charger","Earphones","Cover","Screen Guard"],features:{delivery:false,advance:true,notes:true,measurements:false,gst:true}},
-"hardware":{name:"Hardware",catalog:["Tools","Fasteners","Pipes","Electrical Items"],features:{delivery:false,advance:true,notes:true,measurements:false,gst:true}},
-"furniture":{name:"Furniture",catalog:["Chair","Table","Sofa","Bed","Cupboard"],features:{delivery:true,advance:true,notes:true,measurements:true,gst:true}},
-"stationery":{name:"Stationery",catalog:["Notebook","Pen","Printing","School Supplies"],features:{delivery:false,advance:false,notes:true,measurements:false,gst:true}},
-"jewellery":{name:"Jewellery",catalog:["Ring","Necklace","Bracelet","Earrings"],features:{delivery:false,advance:true,notes:true,measurements:true,gst:true}},
-"restaurant":{name:"Restaurant",catalog:["Pizza","Burger","Sandwich","Rice","Beverage"],features:{delivery:true,advance:false,notes:true,measurements:false,gst:true}},
-"cafe":{name:"Café",catalog:["Coffee","Tea","Sandwich","Pastry","Beverage"],features:{delivery:true,advance:false,notes:true,measurements:false,gst:true}},
-"bakery":{name:"Bakery",catalog:["Cake","Bread","Pastry","Cookies"],features:{delivery:true,advance:true,notes:true,measurements:false,gst:true}},
-"fast-food":{name:"Fast Food",catalog:["Burger","Pizza","Fries","Sandwich","Beverage"],features:{delivery:true,advance:false,notes:true,measurements:false,gst:true}},
-"catering-tiffin":{name:"Catering / Tiffin",catalog:["Tiffin","Catering Package","Meal","Event Catering"],features:{delivery:true,advance:true,notes:true,measurements:false,gst:true}},
-"sweet-shop":{name:"Sweet Shop",catalog:["Ladoo","Barfi","Pedha","Jalebi","Gift Box"],features:{delivery:true,advance:true,notes:true,measurements:false,gst:true}},
-"salon-barber":{name:"Salon / Barber",catalog:["Haircut","Beard","Hair Colour","Facial","Hair Spa"],features:{delivery:false,advance:false,notes:true,measurements:false,gst:true}},
-"beauty-parlour":{name:"Beauty Parlour",catalog:["Facial","Makeup","Hair Styling","Manicure","Pedicure"],features:{delivery:false,advance:true,notes:true,measurements:false,gst:true}},
-"spa":{name:"Spa",catalog:["Massage","Therapy","Body Spa","Facial"],features:{delivery:false,advance:true,notes:true,measurements:false,gst:true}},
-"fitness-gym":{name:"Fitness / Gym",catalog:["Monthly Membership","Personal Training","Annual Membership","Consultation"],features:{delivery:false,advance:true,notes:true,measurements:false,gst:true}},
-"tailoring-boutique":{name:"Tailoring / Boutique",catalog:["Shirt","Pant","Kurta","Uniform","Alteration"],features:{delivery:true,advance:true,notes:true,measurements:true,gst:true}},
-"laundry":{name:"Laundry",catalog:["Wash","Dry Clean","Ironing","Express Laundry"],features:{delivery:true,advance:false,notes:true,measurements:false,gst:true}},
-"mobile-repair":{name:"Mobile Repair",catalog:["Screen Repair","Battery Replacement","Software Service","Charging Port"],features:{delivery:false,advance:true,notes:true,measurements:false,gst:true}},
-"computer-service":{name:"Computer Service",catalog:["Laptop Repair","Desktop Repair","Software Installation","Upgrade"],features:{delivery:false,advance:true,notes:true,measurements:false,gst:true}},
-"electronics-repair":{name:"Electronics Repair",catalog:["TV Repair","Speaker Repair","PCB Repair","Appliance Repair"],features:{delivery:false,advance:true,notes:true,measurements:false,gst:true}},
-"automobile-garage":{name:"Automobile / Garage",catalog:["Service","Oil Change","Brake Service","Repair"],features:{delivery:false,advance:true,notes:true,measurements:false,gst:true}},
-"ac-appliance-service":{name:"AC / Appliance Service",catalog:["AC Service","AC Repair","Washing Machine","Refrigerator"],features:{delivery:false,advance:true,notes:true,measurements:false,gst:true}},
-"home-services":{name:"Home Services",catalog:["Cleaning","Plumbing","Electrical","Pest Control"],features:{delivery:false,advance:true,notes:true,measurements:false,gst:true}},
-"printing-xerox":{name:"Printing / Xerox",catalog:["Xerox","Color Print","Photo Print","Binding"],features:{delivery:false,advance:true,notes:true,measurements:false,gst:true}},
-"photography":{name:"Photography",catalog:["Photo Session","Wedding Photography","Video Shoot","Album"],features:{delivery:false,advance:true,notes:true,measurements:false,gst:true}},
-"graphic-design":{name:"Graphic Design",catalog:["Logo Design","Poster","Social Media Design","Branding"],features:{delivery:false,advance:true,notes:true,measurements:false,gst:true}},
-"digital-marketing":{name:"Digital Marketing",catalog:["Social Media Management","SEO","Advertising","Content Creation"],features:{delivery:false,advance:true,notes:true,measurements:false,gst:true}},
-"consultancy":{name:"Consultancy",catalog:["Consultation","Professional Service","Project","Advisory"],features:{delivery:false,advance:true,notes:true,measurements:false,gst:true}},
-"tuition-coaching":{name:"Tuition / Coaching",catalog:["Monthly Tuition","Course","Test Series","Personal Coaching"],features:{delivery:false,advance:true,notes:true,measurements:false,gst:true}},
-"manufacturing":{name:"Manufacturing",catalog:["Product","Custom Order","Bulk Order","Production Job"],features:{delivery:true,advance:true,notes:true,measurements:true,gst:true}},
-"fabrication-welding":{name:"Fabrication / Welding",catalog:["Gate","Grill","Railing","Custom Fabrication"],features:{delivery:true,advance:true,notes:true,measurements:true,gst:true}},
-"machine-workshop":{name:"Machine Workshop",catalog:["Machining","Turning","Milling","Custom Job"],features:{delivery:false,advance:true,notes:true,measurements:true,gst:true}},
-"other":{name:"Other Business",catalog:["Product / Service"],features:{delivery:true,advance:true,notes:true,measurements:false,gst:true}}
-};
-const PLAN_FEATURES={
-free:{name:"Free",maxOrders:50,pdf:true,whatsapp:true,reports:false,employees:1},
-pro:{name:"Pro",maxOrders:1000,pdf:true,whatsapp:true,reports:true,employees:3},
-business:{name:"Business",maxOrders:10000,pdf:true,whatsapp:true,reports:true,employees:10}
-};
-const state={businessType:"",businessConfig:null,orderItems:[],currentBill:null,orderFilter:"all"};
-function $(id){return document.getElementById(id);}
-function $$(selector){return document.querySelectorAll(selector);}
-function uid(prefix){return prefix+"_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,7);}
-function money(value){return "₹"+Number(value||0).toLocaleString("en-IN",{minimumFractionDigits:0,maximumFractionDigits:2});}
-function escapeHTML(value){return String(value??"").replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c];});}
-function cleanPhone(value){return String(value||"").replace(/\D/g,"");}
-function defaultData(){
-return {version:MANAGEX.version,business:null,products:[],customers:[],orders:[],settings:{deliveryDate:true,advancePayment:true,notes:true,measurements:false,gst:true,billFooter:"Thank you for your business.",theme:"light"},subscription:{plan:"free",status:"active"},counters:{order:0}};
-}
-function getDB(){
-try{
-const raw=localStorage.getItem(MANAGEX.storageKey);
-if(!raw)return defaultData();
-const data=JSON.parse(raw);
-const base=defaultData();
-return Object.assign(base,data,{settings:Object.assign(base.settings,data.settings||{}),subscription:Object.assign(base.subscription,data.subscription||{}),counters:Object.assign(base.counters,data.counters||{})});
-}catch(e){return defaultData();}
-}
-function saveDB(data){localStorage.setItem(MANAGEX.storageKey,JSON.stringify(data));}
-const ManageXDB={
-get:function(){return getDB();},
-save:function(data){saveDB(data);},
-business:function(){return getDB().business;},
-products:function(){return getDB().products;},
-customers:function(){return getDB().customers;},
-orders:function(){return getDB().orders;},
-saveProduct:function(product){const db=getDB();const index=db.products.findIndex(p=>p.id===product.id);if(index>=0)db.products[index]=product;else db.products.push(product);saveDB(db);},
-deleteProduct:function(id){const db=getDB();db.products=db.products.filter(p=>p.id!==id);saveDB(db);},
-saveCustomer:function(customer){const db=getDB();const index=db.customers.findIndex(c=>c.id===customer.id);if(index>=0)db.customers[index]=customer;else db.customers.push(customer);saveDB(db);},
-saveOrder:function(order){const db=getDB();const index=db.orders.findIndex(o=>o.id===order.id);if(index>=0)db.orders[index]=order;else db.orders.unshift(order);saveDB(db);}
-};
-function getBusinessConfig(type){return BUSINESS_CONFIG[type]||BUSINESS_CONFIG.other;}
-function showToast(message){
-let toast=$("managexToast");
-if(!toast){toast=document.createElement("div");toast.id="managexToast";toast.className="managex-toast";document.body.appendChild(toast);}
-toast.textContent=message;toast.classList.add("show");clearTimeout(toast._timer);toast._timer=setTimeout(()=>toast.classList.remove("show"),2200);
-}
-function showPage(pageId){
-$$(".app-page").forEach(p=>{p.classList.remove("active-page");p.style.display="none";});
-$$(".nav-item").forEach(n=>n.classList.remove("active"));
-const page=$(pageId);
-if(page){page.classList.add("active-page");page.style.display="block";}
-$$(".nav-item").forEach(n=>{if(n.dataset.page===pageId)n.classList.add("active");});
-window.scrollTo(0,0);
-if(pageId==="homePage")renderDashboard();
-if(pageId==="ordersPage")renderOrders();
-if(pageId==="customersPage")renderCustomers();
-if(pageId==="productsPage")renderProducts();
-}
-function openMainApp(){if($("setupPage"))$("setupPage").style.display="none";if($("mainApp"))$("mainApp").style.display="block";showPage("homePage");loadBusinessIntoUI();}
-function openSetup(){if($("setupPage"))$("setupPage").style.display="block";if($("mainApp"))$("mainApp").style.display="none";}
-function selectBusinessType(button){
-$$(".business-type-card").forEach(c=>c.classList.remove("selected"));
-button.classList.add("selected");
-state.businessType=button.dataset.businessType||"";
-state.businessConfig=getBusinessConfig(state.businessType);
-if($("businessTypeError"))$("businessTypeError").textContent="";
-}
-function openDetailsStep(){
-if(!state.businessType){$("businessTypeError").textContent="Please select your business type.";showToast("Select a business type first");return;}
-const db=getDB();db.business=Object.assign({},db.business||{},{businessType:state.businessType,businessDisplayName:getBusinessConfig(state.businessType).name,defaultFeatures:getBusinessConfig(state.businessType).features,updatedAt:new Date().toISOString()});saveDB(db);
-$("businessStep").style.display="none";$("detailsStep").style.display="block";$("progressBusiness").classList.remove("active");$("progressBusiness").classList.add("completed");$("progressDetails").classList.add("active");loadProfileFields(db.business);window.scrollTo(0,0);
-}
-function openBusinessStep(){$("detailsStep").style.display="none";$("businessStep").style.display="block";$("progressDetails").classList.remove("active");$("progressBusiness").classList.remove("completed");$("progressBusiness").classList.add("active");}
-function loadProfileFields(b){
-$("businessName").value=b?.businessName||"";$("ownerName").value=b?.ownerName||"";$("phoneNumber").value=b?.phoneNumber||"";$("whatsappNumber").value=b?.whatsappNumber||"";$("businessAddress").value=b?.businessAddress||"";$("gstin").value=b?.gstin||"";$("tagline").value=b?.tagline||"";
-}
-function finishSetup(){
-const businessName=$("businessName").value.trim(),ownerName=$("ownerName").value.trim(),phone=cleanPhone($("phoneNumber").value),whatsapp=cleanPhone($("whatsappNumber").value),address=$("businessAddress").value.trim(),gstin=$("gstin").value.trim().toUpperCase(),tagline=$("tagline").value.trim();
-$("profileError").textContent="";
-if(!businessName){$("profileError").textContent="Please enter your business name.";return;}
-if(!ownerName){$("profileError").textContent="Please enter the owner's name.";return;}
-if(!/^[6-9]\d{9}$/.test(phone)){$("profileError").textContent="Enter a valid 10-digit Indian mobile number.";return;}
-if(whatsapp&&!/^[6-9]\d{9}$/.test(whatsapp)){$("profileError").textContent="Enter a valid WhatsApp number.";return;}
-if(gstin&&!/^[0-9A-Z]{15}$/.test(gstin)){$("profileError").textContent="GSTIN must contain 15 characters.";return;}
-const db=getDB(),type=state.businessType||db.business?.businessType||"other";
-db.business={...(db.business||{}),businessType:type,businessDisplayName:getBusinessConfig(type).name,businessName,ownerName,phoneNumber:phone,whatsappNumber:whatsapp||phone,businessAddress:address,gstin,tagline,createdAt:db.business?.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString(),configVersion:MANAGEX.configVersion};
-saveDB(db);
-if(!db.products.length)getBusinessConfig(type).catalog.forEach(name=>db.products.push({id:uid("prd"),name,category:"Default",price:0,active:true,createdAt:new Date().toISOString()}));
-saveDB(db);state.businessType=type;state.businessConfig=getBusinessConfig(type);openMainApp();showToast("ManageX setup completed");
-}
-function loadBusinessIntoUI(){
-const db=getDB(),b=db.business;if(!b)return;
-if($("dashboardWelcome"))$("dashboardWelcome").textContent="Welcome to "+b.businessName+". Manage your business from one place.";
-if($("headerBusinessType"))$("headerBusinessType").textContent=getBusinessConfig(b.businessType).name;
-}
-function renderDashboard(){
-const db=getDB(),orders=db.orders,total=orders.reduce((s,o)=>s+Number(o.total||0),0),received=orders.reduce((s,o)=>s+Number(o.advance||0),0),pending=Math.max(0,total-received);
-$("totalOrders").textContent=orders.length;$("pendingOrders").textContent=orders.filter(o=>o.status!=="completed").length;$("completedOrders").textContent=orders.filter(o=>o.status==="completed").length;$("totalSales").textContent=money(total);$("amountReceived").textContent=money(received);$("amountPending").textContent=money(pending);
-const percent=total?Math.min(100,(received/total)*100):0;if($("paymentProgress"))$("paymentProgress").style.width=percent+"%";
-const recent=orders.slice(0,5);
-$("recentOrdersList").innerHTML=recent.length?recent.map(orderCardHTML).join(""):'<div class="empty-state"><div class="empty-icon">ORD</div><h3>No orders yet</h3><p>Your recent orders will appear here.</p></div>';
-bindOrderActions();
-}
-function orderCardHTML(o){
-return '<div class="data-card"><div><strong>'+escapeHTML(o.orderNumber)+'</strong><p>'+escapeHTML(o.customerName)+' · '+money(o.total)+'</p><small>'+escapeHTML(o.status||"pending")+'</small></div><div><button type="button" class="small-primary-button" data-order-view="'+o.id+'">View</button></div></div>';
-}
-function renderOrders(){
-const db=getDB(),filter=state.orderFilter,orders=db.orders.filter(o=>filter==="all"||o.status===filter);
-$("ordersList").innerHTML=orders.length?orders.map(o=>orderCardHTML(o)+'<div class="order-actions"><button type="button" class="small-primary-button" data-order-complete="'+o.id+'">'+(o.status==="completed"?"Completed":"Mark Complete")+'</button><button type="button" class="small-secondary-button" data-order-delete="'+o.id+'">Delete</button></div>').join(""):'<div class="empty-state"><div class="empty-icon">ORD</div><h3>No orders found</h3><p>Create your first order to see it here.</p><button type="button" class="small-primary-button" data-action="new-order">New Order</button></div>';
-bindOrderActions();
-}
-function bindOrderActions(){
-$$("[data-order-view]").forEach(b=>b.onclick=()=>showBillForOrder(b.dataset.orderView));
-$$("[data-order-complete]").forEach(b=>b.onclick=()=>{const db=getDB(),o=db.orders.find(x=>x.id===b.dataset.orderComplete);if(o){o.status="completed";o.completedAt=new Date().toISOString();saveDB(db);refreshAll();showToast("Order updated");}});
-$$("[data-order-delete]").forEach(b=>b.onclick=()=>{if(!confirm("Delete this order?"))return;const db=getDB();db.orders=db.orders.filter(o=>o.id!==b.dataset.orderDelete);saveDB(db);refreshAll();showToast("Order deleted");});
-$$("[data-action='new-order']").forEach(b=>b.onclick=openNewOrder);
-}
-function renderProducts(){
-const products=getDB().products;
-$("productsList").innerHTML=products.length?products.map(p=>'<div class="data-card"><div><strong>'+escapeHTML(p.name)+'</strong><p>'+escapeHTML(p.category||"Product")+'</p></div><div><strong>'+money(p.price)+'</strong><div class="order-actions"><button type="button" class="small-primary-button" data-edit-product="'+p.id+'">Edit</button><button type="button" class="small-secondary-button" data-delete-product="'+p.id+'">Delete</button></div></div></div>').join(""):'<div class="empty-state"><div class="empty-icon">CAT</div><h3>No products or services</h3><p>Add your first product or service.</p></div>';
-$$("[data-delete-product]").forEach(b=>b.onclick=()=>{if(confirm("Delete this product?")){ManageXDB.deleteProduct(b.dataset.deleteProduct);renderProducts();refreshProductSelect();showToast("Product deleted");}});
-$$("[data-edit-product]").forEach(b=>b.onclick=()=>editProduct(b.dataset.editProduct));
-}
-function addProduct(){
-const name=prompt("Product / Service name:");
-if(!name||!name.trim())return;
-const price=Number(prompt("Price:", "0"));
-if(!Number.isFinite(price)||price<0){showToast("Invalid price");return;}
-const category=prompt("Category:","General")||"General";
-ManageXDB.saveProduct({id:uid("prd"),name:name.trim(),category,price,active:true,createdAt:new Date().toISOString()});
-renderProducts();refreshProductSelect();showToast("Product added");
-}
-function editProduct(id){
-const p=getDB().products.find(x=>x.id===id);if(!p)return;
-const name=prompt("Product / Service name:",p.name);if(!name||!name.trim())return;
-const price=Number(prompt("Price:",p.price));if(!Number.isFinite(price)||price<0){showToast("Invalid price");return;}
-p.name=name.trim();p.price=price;p.category=prompt("Category:",p.category)||p.category;ManageXDB.saveProduct(p);renderProducts();refreshProductSelect();showToast("Product updated");
-}
-function refreshProductSelect(){
-const select=$("orderProduct");if(!select)return;
-select.innerHTML='<option value="">Select product/service</option>'+getDB().products.map(p=>'<option value="'+p.id+'">'+escapeHTML(p.name)+' — '+money(p.price)+'</option>').join("");
-}
-function openNewOrder(){
-state.orderItems=[];["orderCustomerName","orderCustomerPhone","orderNotes","orderDeliveryDate"].forEach(id=>{if($(id))$(id).value="";});$("orderAdvance").value="0";$("orderPrice").value="";$("orderQuantity").value="1";refreshProductSelect();renderOrderItems();showPage("newOrderPage");
-}
-function addOrderItem(){
-const productId=$("orderProduct").value,product=getDB().products.find(p=>p.id===productId),quantity=Number($("orderQuantity").value),price=Number($("orderPrice").value||product?.price||0);
-if(!product){showToast("Select a product or service");return;}
-if(!Number.isFinite(quantity)||quantity<1){showToast("Quantity must be at least 1");return;}
-if(!Number.isFinite(price)||price<0){showToast("Enter a valid price");return;}
-state.orderItems.push({id:uid("item"),productId,name:product.name,quantity,price,total:quantity*price});renderOrderItems();
-}
-function renderOrderItems(){
-$("orderItemsList").innerHTML=state.orderItems.length?state.orderItems.map((i,index)=>'<div class="data-card"><div><strong>'+escapeHTML(i.name)+'</strong><p>'+i.quantity+' × '+money(i.price)+'</p></div><div><strong>'+money(i.total)+'</strong><button type="button" class="small-secondary-button" data-remove-item="'+index+'">Remove</button></div></div>').join(""):'';
-$$("[data-remove-item]").forEach(b=>b.onclick=()=>{state.orderItems.splice(Number(b.dataset.removeItem),1);renderOrderItems();});
-const total=state.orderItems.reduce((s,i)=>s+i.total,0),advance=Number($("orderAdvance")?.value||0),safeAdvance=Math.min(Math.max(advance,0),total);$("orderTotalPreview").textContent="Total: "+money(total)+" | Advance: "+money(safeAdvance)+" | Balance: "+money(Math.max(0,total-safeAdvance));
-}
-function saveOrder(){
-const name=$("orderCustomerName").value.trim(),phone=cleanPhone($("orderCustomerPhone").value),items=state.orderItems,total=items.reduce((s,i)=>s+i.total,0),advance=Number($("orderAdvance").value||0);
-$("orderError").textContent="";
-if(!name){$("orderError").textContent="Customer name is required.";return;}
-if(!/^[6-9]\d{9}$/.test(phone)){$("orderError").textContent="Enter a valid 10-digit mobile number.";return;}
-if(!items.length){$("orderError").textContent="Add at least one product or service.";return;}
-if(advance<0||advance>total){$("orderError").textContent="Advance cannot be greater than total.";return;}
-const db=getDB();db.counters.order++;const order={id:uid("ord"),orderNumber:"MX-"+String(db.counters.order).padStart(4,"0"),customerName:name,customerPhone:phone,items,total,advance,balance:total-advance,notes:$("orderNotes").value.trim(),deliveryDate:$("orderDeliveryDate").value,status:total-advance<=0?"completed":"pending",createdAt:new Date().toISOString()};
-db.orders.unshift(order);
-let customer=db.customers.find(c=>cleanPhone(c.phone)===phone);
-if(!customer){customer={id:uid("cus"),name,phone,totalOrders:0,totalSpending:0,pendingAmount:0,createdAt:new Date().toISOString()};db.customers.push(customer);}
-customer.name=name;customer.totalOrders=db.orders.filter(o=>cleanPhone(o.customerPhone)===phone).length;customer.totalSpending=db.orders.filter(o=>cleanPhone(o.customerPhone)===phone).reduce((s,o)=>s+Number(o.total||0),0);customer.pendingAmount=db.orders.filter(o=>cleanPhone(o.customerPhone)===phone).reduce((s,o)=>s+Number(o.balance||0),0);
-saveDB(db);state.currentBill=order;state.orderItems=[];renderDashboard();renderOrders();renderCustomers();showBillForOrder(order.id);showToast("Order saved");
-}
-function showBillForOrder(id){const order=getDB().orders.find(o=>o.id===id);if(!order)return;state.currentBill=order;renderBill(order);showPage("billPage");}
-function renderBill(order){
-const db=getDB(),b=db.business||{},footer=db.settings.billFooter||"Thank you for your business.";
-$("billPreview").innerHTML='<div class="bill-inner"><div class="bill-header"><div><h2>'+escapeHTML(b.businessName||"ManageX Business")+'</h2><p>'+escapeHTML(b.businessAddress||"")+'</p><p>'+escapeHTML(b.phoneNumber||"")+'</p></div><strong>'+escapeHTML(order.orderNumber)+'</strong></div><hr><p><strong>Customer:</strong> '+escapeHTML(order.customerName)+'</p><p><strong>Phone:</strong> '+escapeHTML(order.customerPhone)+'</p><p><strong>Date:</strong> '+new Date(order.createdAt).toLocaleDateString("en-IN")+'</p><table class="bill-table"><thead><tr><th>Item</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody>'+order.items.map(i=>'<tr><td>'+escapeHTML(i.name)+'</td><td>'+i.quantity+'</td><td>'+money(i.price)+'</td><td>'+money(i.total)+'</td></tr>').join("")+'</tbody></table><div class="bill-total"><p>Subtotal: <strong>'+money(order.total)+'</strong></p><p>Advance: <strong>'+money(order.advance)+'</strong></p><p>Balance Due: <strong>'+money(order.balance)+'</strong></p></div><p class="bill-footer">'+escapeHTML(footer)+'</p></div>';
-  }
-function printBill(){window.print();}
-function shareBillWhatsApp(){
-const order=state.currentBill;if(!order)return;
-const b=getDB().business||{},text="*"+(b.businessName||"ManageX")+"*%0AOrder: "+order.orderNumber+"%0ACustomer: "+order.customerName+"%0ATotal: "+money(order.total)+"%0AAdvance: "+money(order.advance)+"%0ABalance: "+money(order.balance)+"%0AThank you!";
-const phone=order.customerPhone||b.whatsappNumber||b.phoneNumber;window.open("https://wa.me/"+cleanPhone(phone)+"?text="+text,"_blank");
-}
-function renderCustomers(){
-const query=($("customerSearch")?.value||"").toLowerCase().trim(),customers=getDB().customers.filter(c=>(c.name+" "+c.phone).toLowerCase().includes(query));
-$("customersList").innerHTML=customers.length?customers.map(c=>'<div class="data-card"><div><strong>'+escapeHTML(c.name)+'</strong><p>'+escapeHTML(c.phone)+'</p></div><div><strong>'+money(c.totalSpending)+'</strong><p>Pending '+money(c.pendingAmount)+'</p><small>'+c.totalOrders+' orders</small></div></div>').join(""):'<div class="empty-state"><div class="empty-icon">CUS</div><h3>No customers found</h3><p>Customers will appear here after you create orders.</p></div>';
-}
-function openSettings(setting){
-const db=getDB(),b=db.business||{},s=db.settings;
-if(setting==="business-profile")$("settingsContent").innerHTML='<div class="form-card"><h3>Business Profile</h3><label>Business Name</label><input id="setBusinessName" class="mx-input" value="'+escapeHTML(b.businessName||"")+'"><label>Owner Name</label><input id="setOwnerName" class="mx-input" value="'+escapeHTML(b.ownerName||"")+'"><label>Phone</label><input id="setPhone" class="mx-input" value="'+escapeHTML(b.phoneNumber||"")+'"><label>WhatsApp</label><input id="setWhatsApp" class="mx-input" value="'+escapeHTML(b.whatsappNumber||"")+'"><label>Address</label><textarea id="setAddress" class="mx-input mx-textarea">'+escapeHTML(b.businessAddress||"")+'</textarea><label>GSTIN</label><input id="setGST" class="mx-input" value="'+escapeHTML(b.gstin||"")+'"><label>Tagline</label><input id="setTagline" class="mx-input" value="'+escapeHTML(b.tagline||"")+'"><button class="setup-primary-btn" id="saveBusinessSettings">Save Profile</button></div>';
-else if(setting==="products"){$("settingsContent").innerHTML='<div class="form-card"><h3>Products & Services</h3><p>Use the Products tab to manage your catalog.</p><button class="setup-primary-btn" id="settingsProductsBtn">Open Products</button></div>';$("settingsProductsBtn").onclick=()=>showPage("productsPage");}
-else if(setting==="orders")$("settingsContent").innerHTML='<div class="form-card"><h3>Order Settings</h3><label><input type="checkbox" id="setDelivery" '+(s.deliveryDate?"checked":"")+'> Enable delivery date</label><label><input type="checkbox" id="setAdvance" '+(s.advancePayment?"checked":"")+'> Enable advance payment</label><label><input type="checkbox" id="setNotes" '+(s.notes?"checked":"")+'> Enable notes</label><button class="setup-primary-btn" id="saveOrderSettings">Save Settings</button></div>';
-else if(setting==="bills")$("settingsContent").innerHTML='<div class="form-card"><h3>Bill Settings</h3><label>Bill Footer</label><textarea id="setBillFooter" class="mx-input mx-textarea">'+escapeHTML(s.billFooter||"")+'</textarea><label><input type="checkbox" id="setGST" '+(s.gst?"checked":"")+'> Enable GST field</label><button class="setup-primary-btn" id="saveBillSettings">Save Settings</button></div>';
-else if(setting==="appearance")$("settingsContent").innerHTML='<div class="form-card"><h3>Appearance</h3><p>ManageX branding and dark mode will be expanded here.</p><button class="setup-primary-btn" id="toggleThemeBtn">Toggle Theme</button></div>';
-else if(setting==="subscription")$("settingsContent").innerHTML='<div class="form-card"><h3>ManageX Subscription</h3><p>Current plan: <strong>'+PLAN_FEATURES[db.subscription.plan].name+'</strong></p><div class="plan-card"><strong>Free</strong><p>₹0 · 50 orders</p></div><div class="plan-card"><strong>Pro</strong><p>₹99/month · 1,000 orders · Reports</p></div><div class="plan-card"><strong>Business</strong><p>₹199/month · 10,000 orders · Team features</p></div><button class="setup-primary-btn" id="upgradePlanBtn">Upgrade — Payment Integration Later</button></div>';
-if($("saveBusinessSettings"))$("saveBusinessSettings").onclick=saveBusinessSettings;
-if($("saveOrderSettings"))$("saveOrderSettings").onclick=()=>{const db=getDB();db.settings.deliveryDate=$("setDelivery").checked;db.settings.advancePayment=$("setAdvance").checked;db.settings.notes=$("setNotes").checked;saveDB(db);showToast("Order settings saved");};
-if($("saveBillSettings"))$("saveBillSettings").onclick=()=>{const db=getDB();db.settings.billFooter=$("setBillFooter").value.trim();db.settings.gst=$("setGST").checked;saveDB(db);showToast("Bill settings saved");};
-if($("toggleThemeBtn"))$("toggleThemeBtn").onclick=()=>{document.body.classList.toggle("dark-mode");showToast("Appearance changed");};
-if($("upgradePlanBtn"))$("upgradePlanBtn").onclick=()=>showToast("Secure payment backend will be connected later");
-  }
-function saveBusinessSettings(){
-const db=getDB();if(!db.business)return;
-db.business.businessName=$("setBusinessName").value.trim();db.business.ownerName=$("setOwnerName").value.trim();db.business.phoneNumber=cleanPhone($("setPhone").value);db.business.whatsappNumber=cleanPhone($("setWhatsApp").value)||db.business.phoneNumber;db.business.businessAddress=$("setAddress").value.trim();db.business.gstin=$("setGST").value.trim().toUpperCase();db.business.tagline=$("setTagline").value.trim();db.business.updatedAt=new Date().toISOString();saveDB(db);loadBusinessIntoUI();showToast("Business profile saved");
-}
-function refreshAll(){renderDashboard();renderOrders();renderCustomers();renderProducts();refreshProductSelect();}
-function initSetup(){
-$("businessTypeGrid").addEventListener("click",e=>{const card=e.target.closest(".business-type-card");if(card)selectBusinessType(card);});
-$("continueBusinessBtn").onclick=openDetailsStep;$("backToBusinessBtn").onclick=openBusinessStep;$("finishSetupBtn").onclick=finishSetup;
-}
-function initNavigation(){
-$$(".nav-item").forEach(item=>item.onclick=()=>showPage(item.dataset.page));
-$("viewOrdersBtn").onclick=()=>showPage("ordersPage");
-$("newOrderBtn").onclick=openNewOrder;
-$("addProductBtn").onclick=addProduct;
-$("notificationBtn").onclick=()=>showToast("No new notifications");
-$("cancelOrderBtn").onclick=()=>showPage("homePage");
-$("addOrderItemBtn").onclick=addOrderItem;
-$("saveOrderBtn").onclick=saveOrder;
-$("printBillBtn").onclick=printBill;
-$("whatsappBillBtn").onclick=shareBillWhatsApp;
-$("orderAdvance").oninput=renderOrderItems;
-$("orderPrice").oninput=renderOrderItems;
-$("orderQuantity").oninput=renderOrderItems;
-$("customerSearch").oninput=renderCustomers;
-$$(".filter-chip").forEach(chip=>chip.onclick=()=>{state.orderFilter=chip.dataset.filter;$$(".filter-chip").forEach(c=>c.classList.remove("active"));chip.classList.add("active");renderOrders();});
-$$(".settings-item").forEach(item=>item.onclick=()=>openSettings(item.dataset.setting));
-}
-function loadBusiness(){
-const db=getDB();
-if(!db.business||!db.business.businessType){openSetup();return;}
-state.businessType=db.business.businessType;state.businessConfig=getBusinessConfig(state.businessType);
-if(!db.business.businessName||!db.business.ownerName||!db.business.phoneNumber){
-openSetup();$("businessStep").style.display="none";$("detailsStep").style.display="block";$("progressBusiness").classList.remove("active");$("progressBusiness").classList.add("completed");$("progressDetails").classList.add("active");loadProfileFields(db.business);return;
-}
-openMainApp();
-}
-function init(){initSetup();initNavigation();loadBusiness();}
-document.addEventListener("DOMContentLoaded",init);
+const MANAGEX={storageKey:"managex_data",version:6};
+let state={data:{business:{},products:[],customers:[],orders:[],settings:{}},page:"dashboard",editingOrderId:null};
+const $=s=>document.querySelector(s);
+const money=n=>"₹"+Number(n||0).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+function loadData(){try{const x=localStorage.getItem(MANAGEX.storageKey);if(x)state.data={...state.data,...JSON.parse(x)};}catch(e){console.error(e)}}
+function saveData(){localStorage.setItem(MANAGEX.storageKey,JSON.stringify(state.data));}
+function uid(p="mx"){return p+"_"+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function today(){return new Date().toISOString().slice(0,10)}
+function toast(msg){let t=document.querySelector(".mx-toast");if(!t){t=document.createElement("div");t.className="mx-toast";document.body.appendChild(t)}t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200)}
+function paymentReceived(o){return Number(o.amountReceived??o.advance??0)}
+function paymentPending(o){return Math.max(0,Number(o.total||0)-paymentReceived(o))}
+function syncCustomers(){state.data.customers=(state.data.customers||[]).map(c=>{let os=state.data.orders.filter(o=>o.customerId===c.id||String(o.customerPhone||"")===String(c.phone||""));return {...c,totalOrders:os.length,totalSpending:os.reduce((s,o)=>s+Number(o.total||0),0),pendingAmount:os.reduce((s,o)=>s+paymentPending(o),0)}})}
+function migratePayments(){(state.data.orders||[]).forEach(o=>{if(o.amountReceived==null)o.amountReceived=Number(o.advance||0);if(o.balance==null)o.balance=paymentPending(o);if(!o.status)o.status=paymentPending(o)>0?"pending":"completed"});syncCustomers();saveData()}
+function getCustomerByPhone(phone){return state.data.customers.find(c=>String(c.phone||"").replace(/\D/g,"")===String(phone||"").replace(/\D/g,""))}
+function findCustomer(id){return state.data.customers.find(c=>c.id===id)}
+function addOrGetCustomer(name,phone){let c=getCustomerByPhone(phone);if(c){if(name&&!c.name)c.name=name;return c}c={id:uid("cus"),name:name.trim(),phone:phone.trim(),createdAt:Date.now(),totalOrders:0,totalSpending:0,pendingAmount:0};state.data.customers.push(c);return c}
+function nav(page){state.page=page;state.editingOrderId=null;render()}
+function render(){renderApp();setTimeout(()=>{document.querySelectorAll("[data-nav]").forEach(x=>x.onclick=()=>nav(x.dataset.nav));bindPage()},0)}
+function renderApp(){let app=$("#app");if(!app)return;app.innerHTML=`<header class="mx-header"><div class="mx-brand"><div class="mx-logo">MX</div><div><div class="mx-brand-name">ManageX</div><div class="mx-tagline">Manage your business. Your way.</div></div></div><button class="mx-header-btn" data-nav="settings">⚙</button></header><main class="mx-main">${pageHTML()}</main><nav class="mx-bottom-nav"><button data-nav="dashboard" class="${state.page==="dashboard"?"active":""}"><span>⌂</span><small>Home</small></button><button data-nav="orders" class="${state.page==="orders"?"active":""}"><span>▣</span><small>Orders</small></button><button class="mx-nav-main" data-nav="neworder"><span>＋</span><small>New</small></button><button data-nav="customers" class="${state.page==="customers"?"active":""}"><span>♙</span><small>Customers</small></button><button data-nav="settings" class="${state.page==="settings"?"active":""}"><span>⚙</span><small>Settings</small></button></nav>`}
+function pageHTML(){switch(state.page){case"dashboard":return renderDashboard();case"setup":return renderSetup();case"profile":return renderProfile();case"products":return renderProducts();case"customers":return renderCustomers();case"orders":return renderOrders();case"neworder":return renderNewOrder();case"settings":return renderSettings();case"bill":return renderBill();default:return renderDashboard()}}
+function renderDashboard(){let d=state.data,o=d.orders||[],received=o.reduce((s,x)=>s+paymentReceived(x),0),pending=o.reduce((s,x)=>s+paymentPending(x),0),sales=o.reduce((s,x)=>s+Number(x.total||0),0),completed=o.filter(x=>x.status==="completed"&&paymentPending(x)<=0).length,pendingOrders=o.filter(x=>paymentPending(x)>0).length;let recent=[...o].sort((a,b)=>b.createdAt-a.createdAt).slice(0,5);return `<section class="page"><div class="page-head"><div><p class="eyebrow">BUSINESS DASHBOARD</p><h1>${esc(d.business.name||"Welcome to ManageX")}</h1><p class="muted">${esc(d.business.type||"Set up your business to get started")}</p></div><button class="primary-btn" data-nav="neworder">＋ New Order</button></div><div class="stats-grid"><div class="stat-card"><span>Total Orders</span><strong>${o.length}</strong></div><div class="stat-card"><span>Pending Orders</span><strong>${pendingOrders}</strong></div><div class="stat-card"><span>Completed</span><strong>${completed}</strong></div><div class="stat-card"><span>Total Sales</span><strong>${money(sales)}</strong></div></div><div class="payment-grid"><div class="payment-card received"><span>Amount Received</span><strong>${money(received)}</strong></div><div class="payment-card pending"><span>Amount Pending</span><strong>${money(pending)}</strong></div></div><div class="section-head"><h2>Recent Orders</h2><button class="text-btn" data-nav="orders">View all</button></div>${recent.length?recent.map(orderCard).join(""):`<div class="empty-state"><div class="empty-icon">▣</div><h3>No orders yet</h3><p>Create your first order to start managing your business.</p><button class="primary-btn" data-nav="neworder">Create Order</button></div>`}</section>`}
+function renderSetup(){return `<section class="page narrow"><div class="page-head"><div><p class="eyebrow">WELCOME</p><h1>Set up ManageX</h1><p class="muted">Tell us about your business.</p></div></div><form id="setupForm" class="form-card"><label>Business Name<input class="mx-input" name="name" required></label><label>Owner Name<input class="mx-input" name="owner"></label><label>Business Type<select class="mx-input" name="type"><option value="">Select type</option>${businessTypes().map(x=>`<option>${x}</option>`).join("")}</select></label><label>Phone<input class="mx-input" name="phone" inputmode="tel"></label><label>WhatsApp Number<input class="mx-input" name="whatsapp" inputmode="tel"></label><label>Address<textarea class="mx-input" name="address"></textarea></label><label>GSTIN<input class="mx-input" name="gstin"></label><label>Tagline<input class="mx-input" name="tagline" placeholder="Your business tagline"></label><button class="primary-btn full">Save Business</button></form></section>`}
+function businessTypes(){return["Tailoring","Salon & Beauty","Restaurant & Cafe","Retail Store","Electronics","Mobile Shop","Grocery","Bakery","Fitness & Gym","Repair & Service","Printing & Stationery","Automobile","Photography","Freelancer","Consulting","Education","Medical & Pharmacy","Home Services","Other"]}
+function renderProfile(){let b=state.data.business;return `<section class="page narrow"><div class="page-head"><div><p class="eyebrow">BUSINESS</p><h1>Business Profile</h1></div><button class="secondary-btn" data-nav="settings">Back</button></div><form id="profileForm" class="form-card"><label>Business Name<input class="mx-input" name="name" value="${esc(b.name)}" required></label><label>Owner Name<input class="mx-input" name="owner" value="${esc(b.owner)}"></label><label>Business Type<select class="mx-input" name="type">${businessTypes().map(x=>`<option ${x===b.type?"selected":""}>${x}</option>`).join("")}</select></label><label>Phone<input class="mx-input" name="phone" value="${esc(b.phone)}"></label><label>WhatsApp Number<input class="mx-input" name="whatsapp" value="${esc(b.whatsapp)}"></label><label>Address<textarea class="mx-input" name="address">${esc(b.address)}</textarea></label><label>GSTIN<input class="mx-input" name="gstin" value="${esc(b.gstin)}"></label><label>Tagline<input class="mx-input" name="tagline" value="${esc(b.tagline)}"></label><button class="primary-btn full">Save Changes</button></form></section>`}
+function renderProducts(){let p=state.data.products||[];return `<section class="page"><div class="page-head"><div><p class="eyebrow">CATALOG</p><h1>Products & Services</h1><p class="muted">Customize what your business sells.</p></div><button class="primary-btn" id="addProductBtn">＋ Add</button></div><div id="productFormWrap"></div><div class="product-list">${p.length?p.map((x,i)=>`<div class="product-card"><div><strong>${esc(x.name)}</strong><span>${esc(x.category||"General")}</span></div><div class="product-price">${money(x.price)}</div><div class="product-actions"><button class="secondary-btn edit-product" data-id="${x.id}">Edit</button><button class="danger-btn delete-product" data-id="${x.id}">Delete</button></div></div>`).join(""):`<div class="empty-state"><div class="empty-icon">◇</div><h3>No products or services</h3><p>Add items to make order creation faster.</p></div>`}</div></section>`}
+function productForm(p={}){return `<form id="productForm" class="form-card compact"><input type="hidden" name="id" value="${esc(p.id||"")}"><label>Product / Service<input class="mx-input" name="name" value="${esc(p.name||"")}" required></label><label>Category<input class="mx-input" name="category" value="${esc(p.category||"General")}"></label><label>Price<input class="mx-input" name="price" type="number" min="0" step="0.01" value="${Number(p.price||0)}" required></label><div class="form-actions"><button type="button" class="secondary-btn" id="cancelProduct">Cancel</button><button class="primary-btn">Save</button></div></form>`}
+function renderCustomers(){syncCustomers();let q=state.customerSearch||"",cs=state.data.customers.filter(c=>`${c.name} ${c.phone}`.toLowerCase().includes(q.toLowerCase()));return `<section class="page"><div class="page-head"><div><p class="eyebrow">RELATIONSHIPS</p><h1>Customers</h1><p class="muted">${state.data.customers.length} customer${state.data.customers.length===1?"":"s"}</p></div><button class="primary-btn" data-nav="neworder">＋ New Order</button></div><div class="search-box"><input id="customerSearch" class="mx-input" placeholder="Search customer or phone" value="${esc(q)}"></div>${cs.length?cs.map(c=>`<div class="customer-card" data-customer="${c.id}"><div class="customer-avatar">${esc((c.name||"?").charAt(0).toUpperCase())}</div><div class="customer-main"><strong>${esc(c.name)}</strong><span>${esc(c.phone||"No phone")}</span><small>${c.totalOrders} orders · ${money(c.totalSpending)}</small></div><div class="customer-pending">${c.pendingAmount?`<span>${money(c.pendingAmount)} pending</span>`:"<span class=\"paid-text\">Paid</span>"}</div></div>`).join(""):`<div class="empty-state"><div class="empty-icon">♙</div><h3>No customers found</h3><p>Customers are automatically created when you save an order.</p></div>`}</section>`}
+function orderCard(o){return `<div class="order-card"><div class="order-top"><div><strong>${esc(o.orderNo||"Order")}</strong><span>${esc(o.customerName||"Customer")} · ${esc(o.customerPhone||"")}</span></div><span class="status ${paymentPending(o)<=0?"success":"warning"}">${paymentPending(o)<=0?"Paid":"Pending"}</span></div><div class="order-mid"><span>${new Date(o.createdAt||Date.now()).toLocaleDateString("en-IN")}</span><strong>${money(o.total)}</strong></div><div class="payment-line"><span>Received ${money(paymentReceived(o))}</span><span>Pending ${money(paymentPending(o))}</span></div><div class="order-actions"><button class="secondary-btn view-order" data-id="${o.id}">Details</button><button class="secondary-btn edit-order" data-id="${o.id}">Edit</button>${paymentPending(o)>0?`<button class="primary-btn collect-payment" data-id="${o.id}">Collect</button>`:""}</div></div>`}
+function renderOrders(){let o=[...state.data.orders].sort((a,b)=>b.createdAt-a.createdAt),f=state.orderFilter||"all";if(f==="pending")o=o.filter(x=>paymentPending(x)>0);if(f==="completed")o=o.filter(x=>paymentPending(x)<=0);return `<section class="page"><div class="page-head"><div><p class="eyebrow">SALES</p><h1>Orders</h1><p class="muted">${state.data.orders.length} total orders</p></div><button class="primary-btn" data-nav="neworder">＋ New Order</button></div><div class="filter-row"><button class="${f==="all"?"active":""}" data-filter="all">All</button><button class="${f==="pending"?"active":""}" data-filter="pending">Pending</button><button class="${f==="completed"?"active":""}" data-filter="completed">Completed</button></div>${o.length?o.map(orderCard).join(""):`<div class="empty-state"><div class="empty-icon">▣</div><h3>No orders here</h3><p>Orders will appear here once created.</p></div>`}</section>`}
+function renderNewOrder(){let old=state.editingOrderId?state.data.orders.find(x=>x.id===state.editingOrderId):null;let items=old?.items||[{productId:"",name:"",qty:1,price:0,total:0}];return `<section class="page narrow"><div class="page-head"><div><p class="eyebrow">${old?"EDIT ORDER":"NEW ORDER"}</p><h1>${old?"Edit Order":"Create New Order"}</h1></div><button class="secondary-btn" data-nav="orders">Cancel</button></div><form id="orderForm" class="form-card"><input type="hidden" name="id" value="${esc(old?.id||"")}"><label>Customer Name<input class="mx-input" name="customerName" value="${esc(old?.customerName||"")}" required></label><label>Mobile / WhatsApp<input class="mx-input" name="customerPhone" value="${esc(old?.customerPhone||"")}" inputmode="tel" required></label><div class="form-section"><div class="section-head"><h3>Items</h3><button type="button" class="secondary-btn" id="addOrderItem">＋ Add Item</button></div><div id="orderItems">${items.map((x,i)=>itemRow(x,i)).join("")}</div></div><label>Notes<textarea class="mx-input" name="notes">${esc(old?.notes||"")}</textarea><label>Delivery Date<input class="mx-input" type="date" name="deliveryDate" value="${esc(old?.deliveryDate||"")}"></label><label>Advance Payment<input class="mx-input" type="number" min="0" step="0.01" name="advance" value="${Number(paymentReceived(old)||0)}"></label><div class="order-summary-box"><div><span>Subtotal</span><strong id="orderSubtotal">${money(old?.total||0)}</strong></div><div><span>Amount Received</span><strong id="orderReceived">${money(paymentReceived(old))}</strong></div><div><span>Balance Due</span><strong id="orderBalance">${money(paymentPending(old))}</strong></div></div><button class="primary-btn full">${old?"Update Order":"Save Order"}</button><button type="button" class="secondary-btn full" id="saveAndBill">${old?"Update & Generate Bill":"Save & Generate Bill"}</button></form></section>`}
+function itemRow(x,i){return `<div class="order-item-row"><select class="mx-input item-product"><option value="">Select product/service</option>${state.data.products.map(p=>`<option value="${p.id}" data-price="${p.price}" ${p.id===x.productId?"selected":""}>${esc(p.name)} — ${money(p.price)}</option>`).join("")}</select><input class="mx-input item-name" placeholder="Item name" value="${esc(x.name||"")}"><div class="item-inline"><input class="mx-input item-qty" type="number" min="1" value="${Number(x.qty||1)}"><input class="mx-input item-price" type="number" min="0" step="0.01" value="${Number(x.price||0)}"><button type="button" class="danger-btn remove-item">×</button></div><div class="item-total">${money(x.total||0)}</div></div>`}
+function renderBill(){let o=state.data.orders.find(x=>x.id===state.viewOrderId);if(!o){nav("orders");return""}let b=state.data.business;return `<section class="page narrow"><div class="page-head"><div><p class="eyebrow">ORDER ${esc(o.orderNo||"")}</p><h1>Bill Preview</h1></div><button class="secondary-btn" data-nav="orders">Back</button></div><div class="bill-preview"><div class="bill-head"><div><div class="bill-logo">MX</div><h2>${esc(b.name||"ManageX Business")}</h2><p>${esc(b.address||"")}</p><p>${esc(b.phone||"")} ${b.gstin?"· GSTIN "+esc(b.gstin):""}</p></div><div class="bill-meta"><strong>${esc(o.orderNo||"")}</strong><span>${new Date(o.createdAt||Date.now()).toLocaleDateString("en-IN")}</span></div></div><div class="bill-customer"><strong>Bill To</strong><span>${esc(o.customerName)}</span><span>${esc(o.customerPhone)}</span></div><table class="bill-table"><thead><tr><th>Item</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody>${o.items.map(x=>`<tr><td>${esc(x.name)}</td><td>${x.qty}</td><td>${money(x.price)}</td><td>${money(x.total)}</td></tr>`).join("")}</tbody></table><div class="bill-totals"><div><span>Subtotal</span><strong>${money(o.total)}</strong></div><div><span>Received</span><strong>${money(paymentReceived(o))}</strong></div><div class="bill-balance"><span>Balance Due</span><strong>${money(paymentPending(o))}</strong></div></div><div class="bill-footer">${esc(state.data.settings.billFooter||"Thank you for your business!")}</div></div><div class="form-actions bill-actions"><button class="secondary-btn" id="printBill">Print / Save PDF</button>${paymentPending(o)>0?`<button class="primary-btn" id="billCollect" data-id="${o.id}">Collect ${money(paymentPending(o))}</button>`:""}</div></section>`}
+function renderSettings(){let s=state.data.settings||{};return `<section class="page"><div class="page-head"><div><p class="eyebrow">CONTROL CENTER</p><h1>Settings</h1><p class="muted">Manage your business setup and preferences.</p></div></div><div class="settings-grid"><button class="settings-card" data-nav="profile"><strong>Business Profile</strong><span>Name, owner, contact, GSTIN & address</span>›</button><button class="settings-card" data-nav="products"><strong>Products & Services</strong><span>Manage your catalog and prices</span>›</button><div class="settings-card static"><strong>Bill Settings</strong><span>Customize your bill footer</span><textarea id="billFooter" class="mx-input">${esc(s.billFooter||"Thank you for your business!")}</textarea><button class="secondary-btn" id="saveBillSettings">Save</button></div><div class="settings-card static"><strong>Order Settings</strong><label class="toggle-row"><span>Enable delivery date</span><input type="checkbox" id="enableDelivery" ${s.enableDelivery!==false?"checked":""}></label><label class="toggle-row"><span>Enable advance payment</span><input type="checkbox" id="enableAdvance" ${s.enableAdvance!==false?"checked":""}></label></div><div class="settings-card static danger-zone"><strong>Data</strong><span>ManageX currently stores data locally on this device.</span><button class="danger-btn" id="clearData">Reset ManageX Data</button></div></div></section>`}
+function bindPage(){let f=$("#setupForm");if(f)f.onsubmit=e=>{e.preventDefault();let x=Object.fromEntries(new FormData(f));state.data.business=x;saveData();toast("Business profile saved");nav("dashboard")};f=$("#profileForm");if(f)f.onsubmit=e=>{e.preventDefault();state.data.business=Object.fromEntries(new FormData(f));saveData();toast("Business profile updated");nav("settings")};let ap=$("#addProductBtn");if(ap)ap.onclick=()=>{$("#productFormWrap").innerHTML=productForm();bindProductForm()};document.querySelectorAll(".edit-product").forEach(b=>b.onclick=()=>{$("#productFormWrap").innerHTML=productForm(state.data.products.find(x=>x.id===b.dataset.id));bindProductForm()});document.querySelectorAll(".delete-product").forEach(b=>b.onclick=()=>{if(confirm("Delete this product/service?")){state.data.products=state.data.products.filter(x=>x.id!==b.dataset.id);saveData();render()}});let cs=$("#customerSearch");if(cs){cs.oninput=()=>{state.customerSearch=cs.value;render()}}document.querySelectorAll(".customer-card").forEach(b=>b.onclick=()=>showCustomer(b.dataset.customer));document.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{state.orderFilter=b.dataset.filter;render()});document.querySelectorAll(".view-order").forEach(b=>b.onclick=()=>{state.viewOrderId=b.dataset.id;state.page="bill";render()});document.querySelectorAll(".edit-order").forEach(b=>b.onclick=()=>{state.editingOrderId=b.dataset.id;stat.page="neworder";render()});document.querySelectorAll(".collect-payment").forEach(b=>b.onclick=()=>collectRemainingPayment(b.dataset.id));let of=$("#orderForm");if(of)bindOrderForm(of);let pb=$("#printBill");if(pb)pb.onclick=()=>window.print();let bc=$("#billCollect");if(bc)bc.onclick=()=>collectRemainingPayment(bc.dataset.id);let sb=$("#saveBillSettings");if(sb)sb.onclick=()=>{state.data.settings.billFooter=$("#billFooter").value;state.data.settings.enableDelivery=$("#enableDelivery").checked;state.data.settings.enableAdvance=$("#enableAdvance").checked;saveData();toast("Settings saved")};let cd=$("#clearData");if(cd)cd.onclick=()=>{if(confirm("This will permanently clear local ManageX data. Continue?")){localStorage.removeItem(MANAGEX.storageKey);location.reload()}}}
+function bindProductForm(){let f=$("#productForm");if(!f)return;$("#cancelProduct").onclick=()=>{$("#productFormWrap").innerHTML=""};f.onsubmit=e=>{e.preventDefault();let x=Object.fromEntries(new FormData(f)),price=Number(x.price);if(!x.name.trim()||!Number.isFinite(price)||price<0)return toast("Enter valid product details");if(x.id){let p=state.data.products.find(p=>p.id===x.id);Object.assign(p,{name:x.name.trim(),category:x.category.trim(),price})}else state.data.products.push({id:uid("prd"),name:x.name.trim(),category:x.category.trim(),price});saveData();toast("Product saved");render()}}
+function bindOrderForm(f){let itemsBox=$("#orderItems");function calc(){let total=0;itemsBox.querySelectorAll(".order-item-row").forEach(r=>{let q=Math.max(1,Number(r.querySelector(".item-qty").value)||1),p=Math.max(0,Number(r.querySelector(".item-price").value)||0),t=q*p;total+=t;r.querySelector(".item-total").textContent=money(t)});let adv=Math.max(0,Number(f.advance.value)||0);adv=Math.min(adv,total);$("#orderSubtotal").textContent=money(total);$("#orderReceived").textContent=money(adv);$("#orderBalance").textContent=money(total-adv);return{total,adv}}function attach(){itemsBox.querySelectorAll(".order-item-row").forEach(r=>{let sel=r.querySelector(".item-product");sel.onchange=()=>{let o=sel.selectedOptions[0];if(o&&o.dataset.price){r.querySelector(".item-price").value=o.dataset.price;r.querySelector(".item-name").value=o.textContent.split(" — ")[0]};calc()};r.querySelector(".item-qty").oninput=calc;r.querySelector(".item-price").oninput=calc;r.querySelector(".remove-item").onclick=()=>{let rows=itemsBox.querySelectorAll(".order-item-row");if(rows.length>1){r.remove();calc()}else toast("At least one item is required")}})}attach();$("#addOrderItem").onclick=()=>{itemsBox.insertAdjacentHTML("beforeend",itemRow({},itemsBox.children.length));attach();calc()};f.advance.oninput=calc;calc();f.onsubmit=e=>{e.preventDefault();saveOrder(false)};$("#saveAndBill").onclick=()=>saveOrder(true);function saveOrder(openBill){let x=Object.fromEntries(new FormData(f)),rows=[...itemsBox.querySelectorAll(".order-item-row")],items=[];for(let r of rows){let name=r.querySelector(".item-name").value.trim(),qty=Number(r.querySelector(".item-qty").value),price=Number(r.querySelector(".item-price").value);if(!name||!Number.isFinite(qty)||qty<=0||!Number.isFinite(price)||price<0){toast("Please enter valid item details");return}items.push({productId:r.querySelector(".item-product").value,name,qty,price,total:qty*price})}let total=items.reduce((s,x)=>s+x.total,0),adv=Math.max(0,Math.min(Number(x.advance)||0,total));if(!x.customerName.trim()){toast("Customer name is required");return}if(!x.customerPhone.trim()){toast("Customer phone is required");return}let c=addOrGetCustomer(x.customerName,x.customerPhone),existing=x.id?state.data.orders.find(o=>o.id===x.id):null;let o=existing||{id:uid("ord"),orderNo:"MX-"+String(state.data.orders.length+1).padStart(4,"0"),createdAt:Date.now()};Object.assign(o,{customerId:c.id,customerName:x.customerName.trim(),customerPhone:x.customerPhone.trim(),items,total,amountReceived:adv,advance:adv,balance:total-adv,notes:x.notes.trim(),deliveryDate:x.deliveryDate,status:total-adv<=0?"completed":"pending"});if(!existing)state.data.orders.push(o);syncCustomers();saveData();state.editingOrderId=null;toast(existing?"Order updated":"Order saved");if(openBill){state.viewOrderId=o.id;state.page="bill";render()}else nav("orders")}}
+function collectRemainingPayment(id){let o=state.data.orders.find(x=>x.id===id);if(!o||paymentPending(o)<=0)return;if(confirm(`Collect remaining ${money(paymentPending(o))}?`)){o.amountReceived=Number(o.total);o.advance=Number(o.total);o.balance=0;o.status="completed";syncCustomers();saveData();toast("Payment collected");render()}}
+function showCustomer(id){let c=findCustomer(id);if(!c)return;let os=state.data.orders.filter(o=>o.customerId===id||String(o.customerPhone)===String(c.phone));let modal=document.createElement("div");modal.className="mx-modal";modal.innerHTML=`<div class="mx-modal-box"><button class="modal-close">×</button><div class="customer-summary"><div class="customer-avatar large">${esc((c.name||"?").charAt(0).toUpperCase())}</div><h2>${esc(c.name)}</h2><p>${esc(c.phone||"")}</p><div class="customer-stats"><div><strong>${os.length}</strong><span>Orders</span></div><div><strong>${money(os.reduce((s,o)=>s+Number(o.total||0),0))}</strong><span>Spent</span></div><div><strong>${money(os.reduce((s,o)=>s+paymentPending(o),0))}</strong><span>Pending</span></div></div></div><button class="primary-btn full customer-new-order" data-id="${c.id}">＋ New Order</button><h3>Order History</h3><div class="customer-history">${os.length?os.map(o=>`<div><span>${esc(o.orderNo)} · ${new Date(o.createdAt).toLocaleDateString("en-IN")}</span><strong>${money(o.total)}</strong></div>`).join(""):"<p class=\"muted\">No orders yet.</p>"}</div></div>`;document.body.appendChild(modal);modal.querySelector(".modal-close").onclick=()=>modal.remove();modal.onclick=e=>{if(e.target===modal)modal.remove()};modal.querySelector(".customer-new-order").onclick=()=>{modal.remove();state.customerForOrder=id;nav("neworder")}}
+document.addEventListener("DOMContentLoaded",()=>{loadData();if(!state.data.business?.name){state.page="setup"}migratePayments();render()});
