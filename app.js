@@ -1,7 +1,7 @@
 const MANAGEX={storageKey:"managex_data",version:6};
 let state={data:{business:{},products:[],customers:[],orders:[],settings:{}},page:"dashboard",editingOrderId:null};
 const $=s=>document.querySelector(s);
-const money=n=>"₹"+Number(n||0).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2});
+const money=n=>"₹"+Number(n||0).toLocaleString("en-IN",{minimumFractionDigits:2,maximumFractionDigits:2}); 
 const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
 function loadData(){try{const x=localStorage.getItem(MANAGEX.storageKey);if(x)state.data={...state.data,...JSON.parse(x)};}catch(e){console.error(e)}}
 function saveData(){localStorage.setItem(MANAGEX.storageKey,JSON.stringify(state.data));}
