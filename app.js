@@ -1,46 +1,386 @@
 const KEY="managex_data";
 const CFG={types:["Tailoring","Salon","Restaurant","Retail Shop","Electronics","Mobile Shop","Hardware","Automobile","Repair Service","Printing","Photography","Fitness","Freelancer","Other"],seed:{Tailoring:[["Shirt","Shirt",349],["Pant","Pant",349],["Kurta","Kurta",699],["Uniform","Uniform",699],["Alteration","Alteration",150]],Salon:[["Haircut","Haircut",200],["Hair Colour","Hair Colour",800],["Facial","Facial",500],["Beard","Beard",150],["Hair Spa","Hair Spa",700]],Restaurant:[["Pizza","Pizza",250],["Burger","Burger",150],["Sandwich","Sandwich",120],["Coffee","Coffee",80]],"Retail Shop":[["Product 1","General",100],["Product 2","General",200]],Electronics:[["Repair","Service",500],["Accessory","Accessory",300]],"Mobile Shop":[["Mobile Phone","Mobile",10000],["Mobile Accessory","Accessory",500]],Hardware:[["Hardware Item","General",250]],Automobile:[["Service","Service",800],["Oil Change","Service",500]],"Repair Service":[["Repair","Service",500]],Printing:[["Printing","Printing",10]],Photography:[["Photo Session","Photography",1500]],Fitness:[["Training Session","Fitness",500]],Freelancer:[["Service","Professional",1000]],Other:[["Service","General",500]]}};
 let data={business:null,products:[],orders:[],settings:{orderDeliveryDate:true,orderAdvance:true,orderNotes:true,billGst:true,billFooter:"Thank you for your business!"}};
-function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||"{}");data={...data,...x,settings:{...data.settings,...(x.settings||{})};data.products=Array.isArray(data.products)?data.products:[];data.orders=Array.isArray(data.orders)?data.orders:[];}catch(e){}}
+
+function load(){
+try{
+const x=JSON.parse(localStorage.getItem(KEY)||"{}");
+data={...data,...x,settings:{...data.settings,...(x.settings||{})}};
+data.products=Array.isArray(data.products)?data.products:[];
+data.orders=Array.isArray(data.orders)?data.orders:[];
+}catch(e){}
+}
+
 function save(){localStorage.setItem(KEY,JSON.stringify(data))}
-function $(id){return document.getElementById(id)} 
+function $(id){return document.getElementById(id)}
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 function money(v){return "₹"+Number(v||0).toLocaleString("en-IN")}
 function today(){return new Date().toISOString().slice(0,10)}
 function fmtDate(v){if(!v)return "-";const d=new Date(v+"T00:00:00");return d.toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"})}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
-function seedProducts(){if(data.products.length)return;const type=data.business?.type||"Other";const arr=CFG.seed[type]||CFG.seed.Other;data.products=arr.map(x=>({id:uid(),name:x[0],category:x[1],price:x[2]}));save()}
-function init(){load();if(data.business){openApp()}else{showSetup()}bindGlobal()}
-function showSetup(){if($("setupPage"))$("setupPage").style.display="block";if($("mainApp"))$("mainApp").style.display="none"}
-function openApp(){if(!$("mainApp"))return;seedProducts();$("setupPage").style.display="none";$("mainApp").style.display="block";if($("headerBusinessName"))$("headerBusinessName").textContent=data.business?.name||"ManageX";renderDashboard()}
-function showPage(id){document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));const p=$(id);if(p)p.classList.add("active");document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));const n=document.querySelector('.nav-item[data-page="'+id+'"]');if(n)n.classList.add("active");window.scrollTo({top:0,behavior:"smooth"});if(id==="homePage")renderDashboard();if(id==="ordersPage")renderOrders();if(id==="customersPage")renderCustomers();if(id==="productsPage")renderProducts();if(id==="settingsPage")renderSettings()}
-function showSetupStep(step){document.querySelectorAll(".setup-step").forEach(x=>x.style.display="none");const s=$(step);if(s)s.style.display="block"}
-function setupBusiness(){const type=document.querySelector('input[name="businessType"]:checked')?.value||document.querySelector(".business-type.selected")?.dataset.type;if(!type){$("businessTypeError")&&( $("businessTypeError").textContent="Please select your business type.");return false}window.setupType=type;showSetupStep("detailsStep");return true}
-function finishSetup(){const name=$("businessName")?.value.trim(),owner=$("ownerName")?.value.trim(),phone=$("businessPhone")?.value.trim(),wa=$("businessWhatsapp")?.value.trim(),address=$("businessAddress")?.value.trim(),gst=$("businessGstin")?.value.trim(),tag=$("businessTagline")?.value.trim();if(!name||!owner||!phone){if($("detailsError"))$("detailsError").textContent="Please fill Business Name, Owner Name and Phone.";return}data.business={name,owner,phone,whatsapp:wa||phone,address,gstin:gst,tagline:tag,type:window.setupType||"Other"};seedProducts();save();openApp()}
-function bindGlobal(){document.addEventListener("click",e=>{const nav=e.target.closest("[data-page]");if(nav){e.preventDefault();showPage(nav.dataset.page);return}const act=e.target.closest("[data-action]");if(!act)return;const a=act.dataset.action;if(a==="add-product")productForm();if(a==="new-order")newOrder();if(a==="back")showPage("ordersPage")});if($("continueSetupBtn"))$("continueSetupBtn").onclick=setupBusiness;if($("saveBusinessBtn"))$("saveBusinessBtn").onclick=finishSetup;if($("backSetupBtn"))$("backSetupBtn").onclick=()=>showSetupStep("businessStep")}
-function stats(){let total=0,received=0,pending=0,completed=0;data.orders.forEach(o=>{total+=Number(o.total||0);received+=Number(o.advance||0);pending+=Number(o.balance||0);if(o.status==="Completed")completed++});return{orders:data.orders.length,pending:data.orders.filter(o=>o.status!=="Completed").length,completed,total,received,pending}}
-function renderDashboard(){const s=stats();["totalOrders","pendingOrders","completedOrders","totalSales","amountReceived","amountPending"].forEach((id,i)=>{if($(id))$(id).textContent=i<3?[s.orders,s.pending,s.completed][i]:money([s.total,s.received,s.pending][i-3])});if($("dashboardGreeting"))$("dashboardGreeting").textContent="Welcome back, "+(data.business?.owner||"Business Owner")+" 👋";if($("headerBusinessName"))$("headerBusinessName").textContent=data.business?.name||"ManageX";const percent=s.total?Math.min(100,Math.round(s.received/s.total*100)):0;if($("paymentProgress"))$("paymentProgress").textContent=percent+"% received";if($("paymentProgressBar"))$("paymentProgressBar").style.width=percent+"%";if($("recentOrdersList"))$("recentOrdersList").innerHTML=data.orders.slice().reverse().slice(0,5).map(orderCard).join("")||empty("No orders yet","Create your first order to see it here.");if($("viewOrdersBtn"))$("viewOrdersBtn").onclick=()=>showPage("ordersPage");if($("newOrderBtn"))$("newOrderBtn").onclick=newOrder}
-function empty(title,text){return '<div class="empty-state"><strong>'+esc(title)+'</strong><p>'+esc(text)+'</p></div>'}
-function orderCard(o){return '<div class="order-card" onclick="viewOrder(\''+o.id+'\')"><div><strong>'+esc(o.number)+'</strong><div class="muted">'+esc(o.customerName)+' • '+fmtDate(o.date)+'</div></div><div class="order-card-right"><strong>'+money(o.total)+'</strong><span class="status '+(o.status==="Completed"?"success":"warning")+'">'+esc(o.status)+'</span></div></div>'}
-function renderOrders(){const list=$("ordersList");if(!list)return;const q=($("orderSearch")?.value||"").toLowerCase();let arr=data.orders.filter(o=>!q||o.customerName.toLowerCase().includes(q)||o.number.toLowerCase().includes(q)||o.phone.includes(q));list.innerHTML=arr.slice().reverse().map(orderCard).join("")||empty("No orders found","Try another search or create a new order.");if($("orderSearch"))$("orderSearch").oninput=renderOrders}
-function renderCustomers(){const list=$("customersList");if(!list)return;const q=($("customerSearch")?.value||"").toLowerCase(),map={};data.orders.forEach(o=>{const key=o.phone||o.customerName.toLowerCase();if(!map[key])map[key]={name:o.customerName,phone:o.phone,orders:[],spending:0,pending:0};map[key].orders.push(o);map[key].spending+=Number(o.total||0);map[key].pending+=Number(o.balance||0)});const arr=Object.values(map).filter(c=>!q||c.name.toLowerCase().includes(q)||c.phone.includes(q));list.innerHTML=arr.map(c=>'<div class="customer-card" onclick="customerHistory(\''+encodeURIComponent(c.phone||c.name)+'\')"><div class="customer-main"><div class="customer-avatar">'+esc(c.name.charAt(0).toUpperCase())+'</div><div><strong>'+esc(c.name)+'</strong><div class="muted">'+esc(c.phone||"No phone")+'</div></div></div><div class="customer-meta"><span>'+c.orders.length+' orders</span><strong>'+money(c.spending)+'</strong><span class="pending-text">'+money(c.pending)+' pending</span></div></div>').join("")||empty("No customers yet","Customers will appear automatically when you create orders.");if($("customerSearch"))$("customerSearch").oninput=renderCustomers}
-function customerHistory(key){const k=decodeURIComponent(key),orders=data.orders.filter(o=>(o.phone||o.customerName.toLowerCase())===k);const c=orders[0];openTempPage("Customer Details",'<div class="detail-header"><h2>'+esc(c?.customerName||k)+'</h2><p>'+esc(c?.phone||"")+'</p></div><div class="section-card"><h3>Order History</h3>'+orders.slice().reverse().map(orderCard).join("")+'</div>')}
-function renderProducts(){const list=$("productsList");if(!list)return;list.innerHTML=data.products.map(p=>'<div class="product-card"><div><strong>'+esc(p.name)+'</strong><div class="muted">'+esc(p.category||"General")+'</div></div><div class="product-price">'+money(p.price)+'</div><button class="icon-btn" onclick="productForm(\''+p.id+'\')">Edit</button><button class="danger-btn" onclick="deleteProduct(\''+p.id+'\')">Delete</button></div>').join("")||empty("No products","Add your first product or service.")}
-function productForm(id){const p=data.products.find(x=>x.id===id);openTempPage(p?"Edit Product":"Add Product",'<form class="form-card" onsubmit="saveProduct(event,\''+(id||"")+'\')"><label>Product / Service Name<input id="pfName" class="form-control" value="'+esc(p?.name||"")+'" required></label><label>Category<input id="pfCategory" class="form-control" value="'+esc(p?.category||"General")+'"></label><label>Price<input id="pfPrice" class="form-control" type="number" min="0" value="'+Number(p?.price||0)+'" required></label><button class="primary-btn" type="submit">Save Product</button></form>')}
-function saveProduct(e,id){e.preventDefault();const name=$("pfName").value.trim(),category=$("pfCategory").value.trim()||"General",price=Number($("pfPrice").value||0);if(id){const p=data.products.find(x=>x.id===id);Object.assign(p,{name,category,price})}else data.products.push({id:uid(),name,category,price});save();closeTempPage();renderProducts()}
-function deleteProduct(id){if(!confirm("Delete this product/service?"))return;data.products=data.products.filter(p=>p.id!==id);save();renderProducts()}
-function newOrder(){const opts=data.products.map(p=>'<option value="'+p.id+'">'+esc(p.name)+' — '+money(p.price)+'</option>').join("");openTempPage("New Order",'<form class="order-form" onsubmit="saveOrder(event,false)"><label>Customer Name<input id="ofCustomer" class="form-control" required></label><label>Mobile / WhatsApp<input id="ofPhone" class="form-control" inputmode="numeric" maxlength="10" required></label><div id="orderItems"></div><button type="button" class="secondary-btn" onclick="addOrderItem()">+ Add Item</button><label>Advance Payment<input id="ofAdvance" class="form-control" type="number" min="0" value="0" oninput="calcOrderTotal()"></label><label>Delivery Date<input id="ofDelivery" class="form-control" type="date" min="'+today()+'"></label><label>Notes<textarea id="ofNotes" class="form-control"></textarea></label><div id="orderSummary" class="order-summary"></div><div class="action-row"><button type="submit" class="secondary-btn">Save Order</button><button type="button" class="primary-btn" onclick="saveOrder(event,true)">Save & Generate Bill</button></div></form>');addOrderItem()}
-function addOrderItem(){const wrap=$("orderItems");if(!wrap)return;const div=document.createElement("div");div.className="order-item-row";div.innerHTML='<select class="form-control item-product" onchange="calcOrderTotal()">'+data.products.map(p=>'<option value="'+p.id+'">'+esc(p.name)+'</option>').join("")+'</select><input class="form-control item-qty" type="number" min="1" value="1" oninput="calcOrderTotal()"><input class="form-control item-price" type="number" min="0" value="'+Number(data.products[0]?.price||0)+'" oninput="calcOrderTotal()"><button type="button" class="danger-btn" onclick="this.parentElement.remove();calcOrderTotal()">×</button>';wrap.appendChild(div);div.querySelector(".item-product").onchange=function(){const p=data.products.find(x=>x.id===this.value);div.querySelector(".item-price").value=p?.price||0;calcOrderTotal()};calcOrderTotal()}
-function calcOrderTotal(){let total=0;document.querySelectorAll(".order-item-row").forEach(r=>{total+=Number(r.querySelector(".item-qty")?.value||0)*Number(r.querySelector(".item-price")?.value||0)});const adv=Number($("ofAdvance")?.value||0),bal=Math.max(0,total-adv);if($("orderSummary"))$("orderSummary").innerHTML="<div><span>Subtotal</span><strong>"+money(total)+"</strong></div><div><span>Advance</span><strong>"+money(adv)+"</strong></div><div><span>Balance</span><strong>"+money(bal)+"</strong></div>";return{total,advance:adv,balance:bal}}
-function saveOrder(e,bill){if(e)e.preventDefault();const customer=$("ofCustomer")?.value.trim(),phone=$("ofPhone")?.value.trim();if(!customer||!/^[0-9]{10}$/.test(phone)){alert("Enter customer name and valid 10-digit mobile number.");return}const rows=[...document.querySelectorAll(".order-item-row")];if(!rows.length){alert("Add at least one item.");return}const items=rows.map(r=>{const p=data.products.find(x=>x.id===r.querySelector(".item-product").value);const qty=Number(r.querySelector(".item-qty").value||1),price=Number(r.querySelector(".item-price").value||0);return{id:p?.id,name:p?.name||"Item",qty,price,total:qty*price}});const sums=calcOrderTotal();const o={id:uid(),number:"MX-"+new Date().getFullYear()+"-"+String(data.orders.length+1).padStart(4,"0"),date:today(),customerName:customer,phone,items,total:sums.total,advance:sums.advance,balance:sums.balance,status:sums.balance>0?"Pending":"Completed",deliveryDate:$("ofDelivery")?.value||"",notes:$("ofNotes")?.value.trim()||""};data.orders.push(o);save();if(bill){closeTempPage();showBill(o.id)}else{closeTempPage();showPage("ordersPage")}}
-function viewOrder(id){const o=data.orders.find(x=>x.id===id);if(!o)return;openTempPage("Order "+o.number,'<div class="section-card"><div class="order-detail-grid"><p><b>Customer</b><br>'+esc(o.customerName)+'</p><p><b>Phone</b><br>'+esc(o.phone)+'</p><p><b>Date</b><br>'+fmtDate(o.date)+'</p><p><b>Status</b><br>'+esc(o.status)+'</p><p><b>Delivery</b><br>'+fmtDate(o.deliveryDate)+'</p><p><b>Payment</b><br>'+money(o.advance)+' received / '+money(o.balance)+' pending</p></div><h3>Items</h3>'+o.items.map(i=>'<div class="bill-line"><span>'+esc(i.name)+' × '+i.qty+'</span><strong>'+money(i.total)+'</strong></div>').join("")+'<div class="bill-total"><span>Total</span><strong>'+money(o.total)+'</strong></div><p>'+esc(o.notes)+'</p><div class="action-row"><button class="primary-btn" onclick="showBill(\''+o.id+'\')">Generate Bill</button>'+(o.balance>0?'<button class="secondary-btn" onclick="collectPayment(\''+o.id+'\')">Collect Payment</button>':"")+'<button class="danger-btn" onclick="deleteOrder(\''+o.id+'\')">Delete Order</button></div></div>')}
-function collectPayment(id){const o=data.orders.find(x=>x.id===id);if(!o)return;const amount=Number(prompt("Enter payment received:",o.balance)||0);if(!amount||amount<0)return;o.advance=Math.min(o.total,o.advance+amount);o.balance=Math.max(0,o.total-o.advance);o.status=o.balance===0?"Completed":"Pending";save();closeTempPage();showPage("ordersPage")}
-function deleteOrder(id){if(!confirm("Delete this order permanently?"))return;data.orders=data.orders.filter(o=>o.id!==id);save();closeTempPage();showPage("ordersPage")}
-function showBill(id){const o=data.orders.find(x=>x.id===id);if(!o)return;openTempPage("Bill Preview",'<div id="billPage" class="bill-page"><div class="bill-head"><div><h1>'+esc(data.business?.name||"ManageX")+'</h1><p>'+esc(data.business?.tagline||"")+'</p><p>'+esc(data.business?.address||"")+'</p><p>'+esc(data.business?.phone||"")+'</p></div><strong>'+esc(o.number)+'</strong></div><div class="bill-customer"><b>Bill To</b><br>'+esc(o.customerName)+'<br>'+esc(o.phone)+'</div><div class="bill-table"><div class="bill-row bill-head-row"><span>Item</span><span>Qty</span><span>Rate</span><span>Total</span></div>'+o.items.map(i=>'<div class="bill-row"><span>'+esc(i.name)+'</span><span>'+i.qty+'</span><span>'+money(i.price)+'</span><span>'+money(i.total)+'</span></div>').join("")+'</div><div class="bill-totals"><p>Subtotal <b>'+money(o.total)+'</b></p><p>Received <b>'+money(o.advance)+'</b></p><p>Balance Due <b>'+money(o.balance)+'</b></p></div><div class="bill-footer">'+esc(data.settings.billFooter||"Thank you for your business!")+'</div></div><div class="action-row no-print"><button class="primary-btn" onclick="window.print()">Print / Save PDF</button><button class="secondary-btn" onclick="whatsapp(\''+o.id+'\')">WhatsApp</button></div>')}
-function whatsapp(id){const o=data.orders.find(x=>x.id===id);if(!o)return;const msg="Hello "+o.customerName+",%0AYour order "+o.number+" from "+(data.business?.name||"ManageX")+" is ready.%0ATotal: "+money(o.total)+"%0AReceived: "+money(o.advance)+"%0ABalance: "+money(o.balance);window.open("https://wa.me/91"+o.phone+"?text="+msg,"_blank")}
-function openTempPage(title,html){let p=$("tempPage");if(!p){p=document.createElement("section");p.id="tempPage";p.className="page";document.querySelector(".pages")?.appendChild(p)||$("mainApp")?.appendChild(p)}p.innerHTML='<div class="page-header"><button class="back-btn" onclick="closeTempPage()">←</button><div><h2>'+esc(title)+'</h2></div></div>'+html;p.classList.add("active");document.querySelectorAll(".page").forEach(x=>{if(x!==p)x.classList.remove("active")});window.scrollTo(0,0)}
-function closeTempPage(){const p=$("tempPage");if(p)p.classList.remove("active");showPage("ordersPage")}
-function renderSettings(){const box=$("settingsContent");if(!box)return;box.innerHTML='<div class="settings-card"><h3>Business Profile</h3><p><b>'+esc(data.business?.name||"")+'</b></p><p>'+esc(data.business?.type||"")+' • '+esc(data.business?.owner||"")+'</p><p>'+esc(data.business?.phone||"")+'</p></div><div class="settings-card"><h3>Order Settings</h3><label><input type="checkbox" id="setDelivery" '+(data.settings.orderDeliveryDate?"checked":"")+'> Enable delivery date</label><label><input type="checkbox" id="setAdvance" '+(data.settings.orderAdvance?"checked":"")+'> Enable advance payment</label><label><input type="checkbox" id="setNotes" '+(data.settings.orderNotes?"checked":"")+'> Enable order notes</label><button class="primary-btn" onclick="saveOrderSettings()">Save Settings</button></div><div class="settings-card"><h3>Bill Settings</h3><label>Bill Footer<textarea id="setFooter" class="form-control">'+esc(data.settings.billFooter)+'</textarea></label><button class="primary-btn" onclick="saveBillSettings()">Save Bill Settings</button></div><div class="settings-card"><h3>Current Plan</h3><p>Free Plan</p><p class="muted">Subscription features will be added later.</p></div>'}
-function saveOrderSettings(){data.settings.orderDeliveryDate=$("setDelivery").checked;data.settings.orderAdvance=$("setAdvance").checked;data.settings.orderNotes=$("setNotes").checked;save();alert("Order settings saved.");}
-function saveBillSettings(){data.settings.billFooter=$("setFooter").value;save();alert("Bill settings saved.");}
+
+function seedProducts(){
+if(data.products.length)return;
+const type=data.business?.type||"Other";
+const arr=CFG.seed[type]||CFG.seed.Other;
+data.products=arr.map(x=>({id:uid(),name:x[0],category:x[1],price:x[2]}));
+save()
+}
+
+function init(){
+load();
+if(data.business){openApp()}else{showSetup()}
+bindGlobal()
+}
+
+function showSetup(){
+if($("setupPage"))$("setupPage").style.display="block";
+if($("mainApp"))$("mainApp").style.display="none"
+}
+
+function openApp(){
+if(!$("mainApp"))return;
+seedProducts();
+if($("setupPage"))$("setupPage").style.display="none";
+$("mainApp").style.display="block";
+if($("headerBusinessName"))$("headerBusinessName").textContent=data.business?.name||"ManageX";
+renderDashboard()
+}
+
+function showPage(id){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+const p=$(id);
+if(p)p.classList.add("active");
+document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
+const n=document.querySelector('.nav-item[data-page="'+id+'"]');
+if(n)n.classList.add("active");
+window.scrollTo({top:0,behavior:"smooth"});
+if(id==="homePage")renderDashboard();
+if(id==="ordersPage")renderOrders();
+if(id==="customersPage")renderCustomers();
+if(id==="productsPage")renderProducts();
+if(id==="settingsPage")renderSettings()
+}
+
+function showSetupStep(step){
+document.querySelectorAll(".setup-step").forEach(x=>x.style.display="none");
+const s=$(step);
+if(s)s.style.display="block"
+}
+
+function setupBusiness(){
+const type=document.querySelector('input[name="businessType"]:checked')?.value||document.querySelector(".business-type.selected")?.dataset.type;
+if(!type){
+if($("businessTypeError"))$("businessTypeError").textContent="Please select your business type.";
+return false
+}
+window.setupType=type;
+showSetupStep("detailsStep");
+return true
+}
+
+function finishSetup(){
+const name=$("businessName")?.value.trim();
+const owner=$("ownerName")?.value.trim();
+const phone=$("businessPhone")?.value.trim();
+const wa=$("businessWhatsapp")?.value.trim();
+const address=$("businessAddress")?.value.trim();
+const gst=$("businessGstin")?.value.trim();
+const tag=$("businessTagline")?.value.trim();
+if(!name||!owner||!phone){
+if($("detailsError"))$("detailsError").textContent="Please fill Business Name, Owner Name and Phone.";
+return
+}
+data.business={name,owner,phone,whatsapp:wa||phone,address,gstin:gst,tagline:tag,type:window.setupType||"Other"};
+seedProducts();
+save();
+openApp()
+}
+
+function bindGlobal(){
+document.addEventListener("click",e=>{
+const nav=e.target.closest("[data-page]");
+if(nav){
+e.preventDefault();
+showPage(nav.dataset.page);
+return
+}
+const act=e.target.closest("[data-action]");
+if(!act)return;
+const a=act.dataset.action;
+if(a==="add-product")productForm();
+if(a==="new-order")newOrder();
+if(a==="back")showPage("ordersPage")
+});
+if($("continueSetupBtn"))$("continueSetupBtn").onclick=setupBusiness;
+if($("saveBusinessBtn"))$("saveBusinessBtn").onclick=finishSetup;
+if($("backSetupBtn"))$("backSetupBtn").onclick=()=>showSetupStep("businessStep")
+}
+
+function stats(){
+let sales=0;
+let received=0;
+let pendingMoney=0;
+let completedOrders=0;
+let pendingOrders=0;
+data.orders.forEach(o=>{
+const total=Number(o.total)||0;
+const advance=Number(o.advance)||0;
+const balance=Math.max(0,Number(o.balance??(total-advance)));
+sales+=total;
+received+=advance;
+pendingMoney+=balance;
+if(o.status==="Completed")completedOrders++;
+else pendingOrders++
+});
+return{orders:data.orders.length,pendingOrders,completedOrders,sales,received,pendingMoney}
+}
+
+function renderDashboard(){
+const s=stats();
+if($("totalOrders"))$("totalOrders").textContent=s.orders;
+if($("pendingOrders"))$("pendingOrders").textContent=s.pendingOrders;
+if($("completedOrders"))$("completedOrders").textContent=s.completedOrders;
+if($("totalSales"))$("totalSales").textContent=money(s.sales);
+if($("amountReceived"))$("amountReceived").textContent=money(s.received);
+if($("amountPending"))$("amountPending").textContent=money(s.pendingMoney);
+if($("dashboardGreeting"))$("dashboardGreeting").textContent="Welcome back, "+(data.business?.owner||"Business Owner");
+if($("headerBusinessName"))$("headerBusinessName").textContent=data.business?.name||"ManageX";
+const percent=s.sales>0?Math.min(100,Math.round((s.received/s.sales)*100)):0;
+if($("paymentProgress"))$("paymentProgress").textContent=percent+"% received";
+if($("paymentProgressBar"))$("paymentProgressBar").style.width=percent+"%";
+if($("recentOrdersList")){
+$("recentOrdersList").innerHTML=data.orders.slice().sort((a,b)=>(b.date||"").localeCompare(a.date||"")).slice(0,5).map(orderCard).join("")||empty("No orders yet","Create your first order to see it here.")
+}
+if($("viewOrdersBtn"))$("viewOrdersBtn").onclick=()=>showPage("ordersPage");
+if($("newOrderBtn"))$("newOrderBtn").onclick=newOrder
+}
+
+function empty(title,text){
+return '<div class="empty-state"><strong>'+esc(title)+'</strong><p>'+esc(text)+'</p></div>'
+}
+
+function orderCard(o){
+return '<div class="order-card" onclick="viewOrder(\''+o.id+'\')"><div><strong>'+esc(o.number)+'</strong><div class="muted">'+esc(o.customerName)+' • '+fmtDate(o.date)+'</div></div><div class="order-card-right"><strong>'+money(o.total)+'</strong><span class="status '+(o.status==="Completed"?"success":"warning")+'">'+esc(o.status)+'</span></div></div>'
+}
+
+function renderOrders(){
+const list=$("ordersList");
+if(!list)return;
+const q=($("orderSearch")?.value||"").toLowerCase();
+let arr=data.orders.filter(o=>!q||String(o.customerName||"").toLowerCase().includes(q)||String(o.number||"").toLowerCase().includes(q)||String(o.phone||"").includes(q));
+list.innerHTML=arr.slice().reverse().map(orderCard).join("")||empty("No orders found","Try another search or create a new order.");
+if($("orderSearch"))$("orderSearch").oninput=renderOrders
+}
+
+function renderCustomers(){
+const list=$("customersList");
+if(!list)return;
+const q=($("customerSearch")?.value||"").toLowerCase();
+const map={};
+data.orders.forEach(o=>{
+const key=o.phone||String(o.customerName||"").toLowerCase();
+if(!map[key])map[key]={name:o.customerName,phone:o.phone,orders:[],spending:0,pending:0};
+map[key].orders.push(o);
+map[key].spending+=Number(o.total||0);
+map[key].pending+=Number(o.balance||0)
+});
+const arr=Object.values(map).filter(c=>!q||String(c.name||"").toLowerCase().includes(q)||String(c.phone||"").includes(q));
+list.innerHTML=arr.map(c=>'<div class="customer-card" onclick="customerHistory(\''+encodeURIComponent(c.phone||c.name)+'\')"><div class="customer-main"><div class="customer-avatar">'+esc(String(c.name||"?").charAt(0).toUpperCase())+'</div><div><strong>'+esc(c.name)+'</strong><div class="muted">'+esc(c.phone||"No phone")+'</div></div></div><div class="customer-meta"><span>'+c.orders.length+' orders</span><strong>'+money(c.spending)+'</strong><span class="pending-text">'+money(c.pending)+' pending</span></div></div>').join("")||empty("No customers yet","Customers will appear automatically when you create orders.");
+if($("customerSearch"))$("customerSearch").oninput=renderCustomers
+}
+
+function customerHistory(key){
+const k=decodeURIComponent(key);
+const orders=data.orders.filter(o=>(o.phone||String(o.customerName||"").toLowerCase())===k);
+const c=orders[0];
+openTempPage("Customer Details",'<div class="detail-header"><h2>'+esc(c?.customerName||k)+'</h2><p>'+esc(c?.phone||"")+'</p></div><div class="section-card"><h3>Order History</h3>'+orders.slice().reverse().map(orderCard).join("")+'</div>')
+}
+
+function renderProducts(){
+const list=$("productsList");
+if(!list)return;
+list.innerHTML=data.products.map(p=>'<div class="product-card"><div><strong>'+esc(p.name)+'</strong><div class="muted">'+esc(p.category||"General")+'</div></div><div class="product-price">'+money(p.price)+'</div><button class="icon-btn" onclick="productForm(\''+p.id+'\')">Edit</button><button class="danger-btn" onclick="deleteProduct(\''+p.id+'\')">Delete</button></div>').join("")||empty("No products","Add your first product or service.")
+}
+
+function productForm(id){
+const p=data.products.find(x=>x.id===id);
+openTempPage(p?"Edit Product":"Add Product",'<form class="form-card" onsubmit="saveProduct(event,\''+(id||"")+'\')"><label>Product / Service Name<input id="pfName" class="form-control" value="'+esc(p?.name||"")+'" required></label><label>Category<input id="pfCategory" class="form-control" value="'+esc(p?.category||"General")+'"></label><label>Price<input id="pfPrice" class="form-control" type="number" min="0" value="'+Number(p?.price||0)+'" required></label><button class="primary-btn" type="submit">Save Product</button></form>')
+}
+
+function saveProduct(e,id){
+e.preventDefault();
+const name=$("pfName").value.trim();
+const category=$("pfCategory").value.trim()||"General";
+const price=Number($("pfPrice").value||0);
+if(id){
+const p=data.products.find(x=>x.id===id);
+if(p)Object.assign(p,{name,category,price})
+}else data.products.push({id:uid(),name,category,price});
+save();
+closeTempPage();
+showPage("productsPage")
+}
+
+function deleteProduct(id){
+if(!confirm("Delete this product/service?"))return;
+data.products=data.products.filter(p=>p.id!==id);
+save();
+renderProducts()
+}
+
+function newOrder(){
+const opts=data.products.map(p=>'<option value="'+p.id+'">'+esc(p.name)+' — '+money(p.price)+'</option>').join("");
+if(!data.products.length){
+alert("Please add at least one product or service first.");
+showPage("productsPage");
+return
+}
+openTempPage("New Order",'<form class="order-form" onsubmit="saveOrder(event,false)"><label>Customer Name<input id="ofCustomer" class="form-control" required></label><label>Mobile / WhatsApp<input id="ofPhone" class="form-control" inputmode="numeric" maxlength="10" required></label><div id="orderItems"></div><button type="button" class="secondary-btn" onclick="addOrderItem()">+ Add Item</button><label>Advance Payment<input id="ofAdvance" class="form-control" type="number" min="0" value="0" oninput="calcOrderTotal()"></label><label>Delivery Date<input id="ofDelivery" class="form-control" type="date" min="'+today()+'"></label><label>Notes<textarea id="ofNotes" class="form-control"></textarea></label><div id="orderSummary" class="order-summary"></div><div class="action-row"><button type="submit" class="secondary-btn">Save Order</button><button type="button" class="primary-btn" onclick="saveOrder(event,true)">Save & Generate Bill</button></div></form>');
+addOrderItem()
+}
+
+function addOrderItem(){
+const wrap=$("orderItems");
+if(!wrap||!data.products.length)return;
+const div=document.createElement("div");
+div.className="order-item-row";
+div.innerHTML='<select class="form-control item-product">'+data.products.map(p=>'<option value="'+p.id+'">'+esc(p.name)+'</option>').join("")+'</select><input class="form-control item-qty" type="number" min="1" value="1" oninput="calcOrderTotal()"><input class="form-control item-price" type="number" min="0" value="'+Number(data.products[0]?.price||0)+'" oninput="calcOrderTotal()"><button type="button" class="danger-btn" onclick="this.parentElement.remove();calcOrderTotal()">×</button>';
+wrap.appendChild(div);
+div.querySelector(".item-product").onchange=function(){
+const p=data.products.find(x=>x.id===this.value);
+div.querySelector(".item-price").value=p?.price||0;
+calcOrderTotal()
+};
+calcOrderTotal()
+}
+
+function calcOrderTotal(){
+let total=0;
+document.querySelectorAll(".order-item-row").forEach(r=>{
+total+=Number(r.querySelector(".item-qty")?.value||0)*Number(r.querySelector(".item-price")?.value||0)
+});
+const adv=Math.max(0,Number($("ofAdvance")?.value||0));
+const safeAdvance=Math.min(adv,total);
+const bal=Math.max(0,total-safeAdvance);
+if($("ofAdvance"))$("ofAdvance").value=safeAdvance;
+if($("orderSummary"))$("orderSummary").innerHTML="<div><span>Subtotal</span><strong>"+money(total)+"</strong></div><div><span>Advance</span><strong>"+money(safeAdvance)+"</strong></div><div><span>Balance</span><strong>"+money(bal)+"</strong></div>";
+return{total,advance:safeAdvance,balance:bal}
+}
+
+function saveOrder(e,bill){
+if(e)e.preventDefault();
+const customer=$("ofCustomer")?.value.trim();
+const phone=$("ofPhone")?.value.trim();
+if(!customer||!/^[0-9]{10}$/.test(phone)){
+alert("Enter customer name and valid 10-digit mobile number.");
+return
+}
+const rows=[...document.querySelectorAll(".order-item-row")];
+if(!rows.length){
+alert("Add at least one item.");
+return
+}
+const items=rows.map(r=>{
+const p=data.products.find(x=>x.id===r.querySelector(".item-product").value);
+const qty=Math.max(1,Number(r.querySelector(".item-qty").value||1));
+const price=Math.max(0,Number(r.querySelector(".item-price").value||0));
+return{id:p?.id,name:p?.name||"Item",qty,price,total:qty*price}
+});
+const sums=calcOrderTotal();
+const o={id:uid(),number:"MX-"+new Date().getFullYear()+"-"+String(data.orders.length+1).padStart(4,"0"),date:today(),customerName:customer,phone,items,total:sums.total,advance:sums.advance,balance:sums.balance,status:sums.balance>0?"Pending":"Completed",deliveryDate:$("ofDelivery")?.value||"",notes:$("ofNotes")?.value.trim()||""};
+data.orders.push(o);
+save();
+if(bill){
+closeTempPage();
+showBill(o.id)
+}else{
+closeTempPage();
+showPage("ordersPage")
+}
+}
+
+function viewOrder(id){
+const o=data.orders.find(x=>x.id===id);
+if(!o)return;
+openTempPage("Order "+o.number,'<div class="section-card"><div class="order-detail-grid"><p><b>Customer</b><br>'+esc(o.customerName)+'</p><p><b>Phone</b><br>'+esc(o.phone)+'</p><p><b>Date</b><br>'+fmtDate(o.date)+'</p><p><b>Status</b><br>'+esc(o.status)+'</p><p><b>Delivery</b><br>'+fmtDate(o.deliveryDate)+'</p><p><b>Payment</b><br>'+money(o.advance)+' received / '+money(o.balance)+' pending</p></div><h3>Items</h3>'+o.items.map(i=>'<div class="bill-line"><span>'+esc(i.name)+' × '+i.qty+'</span><strong>'+money(i.total)+'</strong></div>').join("")+'<div class="bill-total"><span>Total</span><strong>'+money(o.total)+'</strong></div><p>'+esc(o.notes)+'</p><div class="action-row"><button class="primary-btn" onclick="showBill(\''+o.id+'\')">Generate Bill</button>'+(o.balance>0?'<button class="secondary-btn" onclick="collectPayment(\''+o.id+'\')">Collect Payment</button>':"")+'<button class="danger-btn" onclick="deleteOrder(\''+o.id+'\')">Delete Order</button></div></div>')
+}
+
+function collectPayment(id){
+const o=data.orders.find(x=>x.id===id);
+if(!o)return;
+const remaining=Math.max(0,Number(o.balance||0));
+if(remaining<=0)return;
+const amount=Number(prompt("Enter payment received:",remaining)||0);
+if(!amount||amount<0)return;
+const validAmount=Math.min(amount,remaining);
+o.advance=Math.min(Number(o.total||0),Number(o.advance||0)+validAmount);
+o.balance=Math.max(0,Number(o.total||0)-o.advance);
+o.status=o.balance===0?"Completed":"Pending";
+save();
+closeTempPage();
+showPage("ordersPage")
+}
+
+function deleteOrder(id){
+if(!confirm("Delete this order permanently?"))return;
+data.orders=data.orders.filter(o=>o.id!==id);
+save();
+closeTempPage();
+showPage("ordersPage")
+}
+
+function showBill(id){
+const o=data.orders.find(x=>x.id===id);
+if(!o)return;
+openTempPage("Bill Preview",'<div id="billPage" class="bill-page"><div class="bill-head"><div><h1>'+esc(data.business?.name||"ManageX")+'</h1><p>'+esc(data.business?.tagline||"")+'</p><p>'+esc(data.business?.address||"")+'</p><p>'+esc(data.business?.phone||"")+'</p></div><strong>'+esc(o.number)+'</strong></div><div class="bill-customer"><b>Bill To</b><br>'+esc(o.customerName)+'<br>'+esc(o.phone)+'</div><div class="bill-table"><div class="bill-row bill-head-row"><span>Item</span><span>Qty</span><span>Rate</span><span>Total</span></div>'+o.items.map(i=>'<div class="bill-row"><span>'+esc(i.name)+'</span><span>'+i.qty+'</span><span>'+money(i.price)+'</span><span>'+money(i.total)+'</span></div>').join("")+'</div><div class="bill-totals"><p>Subtotal <b>'+money(o.total)+'</b></p><p>Received <b>'+money(o.advance)+'</b></p><p>Balance Due <b>'+money(o.balance)+'</b></p></div><div class="bill-footer">'+esc(data.settings.billFooter||"Thank you for your business!")+'</div></div><div class="action-row no-print"><button class="primary-btn" onclick="window.print()">Print / Save PDF</button><button class="secondary-btn" onclick="whatsapp(\''+o.id+'\')">WhatsApp</button></div>')
+}
+
+function whatsapp(id){
+const o=data.orders.find(x=>x.id===id);
+if(!o)return;
+const msg="Hello "+o.customerName+",%0AYour order "+o.number+" from "+(data.business?.name||"ManageX")+" is ready.%0ATotal: "+money(o.total)+"%0AReceived: "+money(o.advance)+"%0ABalance: "+money(o.balance);
+window.open("https://wa.me/91"+o.phone+"?text="+msg,"_blank")
+}
+
+function openTempPage(title,html){
+let p=$("tempPage");
+if(!p){
+p=document.createElement("section");
+p.id="tempPage";
+p.className="page";
+document.querySelector(".pages")?.appendChild(p)||$("mainApp")?.appendChild(p)
+}
+p.innerHTML='<div class="page-header"><button class="back-btn" onclick="closeTempPage()">←</button><div><h2>'+esc(title)+'</h2></div></div>'+html;
+p.classList.add("active");
+document.querySelectorAll(".page").forEach(x=>{if(x!==p)x.classList.remove("active")});
+window.scrollTo(0,0)
+}
+
+function closeTempPage(){
+const p=$("tempPage");
+if(p)p.classList.remove("active");
+showPage("ordersPage")
+}
+
+function renderSettings(){
+const box=$("settingsContent");
+if(!box)return;
+box.innerHTML='<div class="settings-card"><h3>Business Profile</h3><p><b>'+esc(data.business?.name||"")+'</b></p><p>'+esc(data.business?.type||"")+' • '+esc(data.business?.owner||"")+'</p><p>'+esc(data.business?.phone||"")+'</p></div><div class="settings-card"><h3>Order Settings</h3><label><input type="checkbox" id="setDelivery" '+(data.settings.orderDeliveryDate?"checked":"")+'> Enable delivery date</label><label><input type="checkbox" id="setAdvance" '+(data.settings.orderAdvance?"checked":"")+'> Enable advance payment</label><label><input type="checkbox" id="setNotes"'+(data.settings.orderNotes?"checked":"")+'> Enable order notes</label><button class="primary-btn" onclick="saveOrderSettings()">Save Settings</button></div><div class="settings-card"><h3>Bill Settings</h3><label>Bill Footer<textarea id="setFooter" class="form-control">'+esc(data.settings.billFooter)+'</textarea></label><button class="primary-btn" onclick="saveBillSettings()">Save Bill Settings</button></div><div class="settings-card"><h3>Current Plan</h3><p>Free Plan</p><p class="muted">Subscription features will be added later.</p></div>'
+}
+
+function saveOrderSettings(){
+data.settings.orderDeliveryDate=$("setDelivery").checked;
+data.settings.orderAdvance=$("setAdvance").checked;
+data.settings.orderNotes=$("setNotes").checked;
+save();
+alert("Order settings saved.")
+}
+
+function saveBillSettings(){
+data.settings.billFooter=$("setFooter").value;
+save();
+alert("Bill settings saved.")
+}
+
 document.addEventListener("DOMContentLoaded",init);
