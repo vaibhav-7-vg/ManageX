@@ -16,7 +16,7 @@ document.body.appendChild(toast);
 toast.textContent=message;
 toast.classList.add("show");
 clearTimeout(toast._timer);
-toast._timer=setTimeout(function(){toast.classList.remove("show");},2200);
+toast._timer=setTimeout(function(){toast.classList.remove("show");},2200); 
 }
 function showPage(pageId){
 var pages=$$(".app-page");
