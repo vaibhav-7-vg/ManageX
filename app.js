@@ -1,1 +1,1212 @@
-const KEY="managex_data";let state={page:"homePage",businessType:"",selectedBusinessCard:null,viewOrderId:null,orderFilter:"all"};const BUSINESS={general-store:"General Store",supermarket:"Supermarket",clothing:"Clothing",electronics:"Electronics",restaurant:"Restaurant / Cafe",salon:"Salon / Beauty",tailoring:"Tailoring",mobile-shop:"Mobile Shop",hardware:"Hardware",automobile:"Automobile",repair-service:"Repair Service",printing:"Printing",photography:"Photography",fitness:"Fitness",freelancer:"Freelancer",other:"Other Business"};function $(id){return document.getElementById(id)}function $$(s){return document.querySelectorAll(s)}function uid(p){return p+"_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,8)}function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}function money(v){return"₹"+Number(v||0).toLocaleString("en-IN",{maximumFractionDigits:2})}function phone(v){return String(v||"").replace(/\D/g,"")}function freshDB(){return{version:3,business:null,products:[],customers:[],orders:[],settings:{deliveryDate:true,advancePayment:true,notes:true,gst:true,billFooter:"Thank you for your business."},counter:0}}function getDB(){try{const x=localStorage.getItem(KEY);if(!x)return freshDB();const d=JSON.parse(x),f=freshDB();return{...f,...d,settings:{...f.settings,...(d.settings||{})}}}catch(e){return freshDB()}}function saveDB(d){localStorage.setItem(KEY,JSON.stringify(d))}function toast(m){const t=$("managexToast");if(!t)return;t.textContent=m;t.classList.add("show");clearTimeout(t._tm);t._tm=setTimeout(()=>t.classList.remove("show"),2200)}function selectBusiness(card){$$(".business-type-card").forEach(x=>x.classList.remove("selected"));card.classList.add("selected");state.businessType=card.dataset.businessType;$("businessTypeError").textContent=""}function openDetails(){if(!state.businessType){$("businessTypeError").textContent="Please select your business type.";return}const d=getDB();d.business={...(d.business||{}),businessType:state.businessType,businessTypeName:BUSINESS[state.businessType]||"Other Business"};saveDB(d);$("businessStep").style.display="none";$("detailsStep").style.display="block";$("progressBusiness").classList.remove("active");$("progressBusiness").classList.add("completed");$("progressDetails").classList.add("active")}function backBusiness(){$("detailsStep").style.display="none";$("businessStep").style.display="block";$("progressDetails").classList.remove("active");$("progressBusiness").classList.remove("completed");$("progressBusiness").classList.add("active")}function finishSetup(){const name=$("businessName").value.trim(),owner=$("ownerName").value.trim(),p=phone($("phoneNumber").value),w=phone($("whatsappNumber").value),address=$("businessAddress").value.trim(),gst=$("gstin").value.trim().toUpperCase(),tag=$("tagline").value.trim();$("profileError").textContent="";if(!name)return $("profileError").textContent="Enter business name.";if(!owner)return $("profileError").textContent="Enter owner name.";if(!/^[6-9]\\d{9}$/.test(p))return $("profileError").textContent="Enter a valid 10-digit phone number.";if(w&&!/^[6-9]\\d{9}$/.test(w))return $("profileError").textContent="Enter a valid WhatsApp number.";if(gst&&!/^[0-9A-Z]{15}$/.test(gst))return $("profileError").textContent="GSTIN must contain 15 characters.";const d=getDB(),type=state.businessType||d.business?.businessType||"other";d.business={...(d.business||{}),businessType:type,businessTypeName:BUSINESS[type],businessName:name,ownerName:owner,phoneNumber:p,whatsappNumber:w||p,businessAddress:address,gstin:gst,tagline:tag,createdAt:d.business?.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString()};if(!d.products.length){["Product / Service 1","Product / Service 2","Product / Service 3"].forEach((n,i)=>d.products.push({id:uid("prd"),name:n,category:"Default",price:0,active:true}))}saveDB(d);openApp();toast("Business created successfully")}function openSetup(){$("setupPage").style.display="block";$("mainApp").style.display="none"}function openApp(){$("setupPage").style.display="none";$("mainApp").style.display="block";loadHeader();showPage("homePage")}function loadHeader(){const b=getDB().business||{};$("headerBusinessName").textContent=b.businessName||"ManageX";$("headerBusinessType").textContent=BUSINESS[b.businessType]||"Business Manager"}function stats(){const d=getDB(),o=d.orders||[];let sales=0,received=0,pending=0,completed=0;for(const x of o){sales+=Number(x.total||0);received+=Math.min(Number(x.total||0),Math.max(0,Number(x.advance||0)));pending+=Math.max(0,Number(x.total||0)-Number(x.advance||0));if(x.status==="Completed")completed++}return{orders:o.length,sales,received,pending,completed,pendingOrders:o.length-completed}}function showPage(id){$$(".app-page").forEach(x=>{x.style.display="none";x.classList.remove("active-page")});$$(".nav-item").forEach(x=>x.classList.remove("active"));const p=$(id);if(!p)return;p.style.display="block";p.classList.add("active-page");const nav=$(`[data-page="${id}"]`);if(nav)nav.classList.add("active");state.page=id;if(id==="homePage")renderDashboard();if(id==="ordersPage")renderOrders();if(id==="customersPage")renderCustomers();if(id==="productsPage")renderProducts();if(id==="settingsPage")renderSettings();if(id==="newOrderPage")renderNewOrder();if(id==="billPage")renderBill();window.scrollTo(0,0)}function renderDashboard(){const d=getDB(),b=d.business||{},s=stats(),recent=[...d.orders].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,5),pct=s.sales?Math.round(s.received/s.sales*100):0;$("homePage").innerHTML=`<div class="page-head"><div><p class="eyebrow">DASHBOARD</p><h1>${esc(b.businessName||"ManageX")}</h1><p class="muted">${esc(b.tagline||"Manage your business. Your way.")}</p></div></div><div class="stats-grid"><div class="stat-card primary-stat"><span>Total Sales</span><strong>${money(s.sales)}</strong></div><div class="stat-card"><span>Total Orders</span><strong>${s.orders}</strong></div><div class="stat-card"><span>Amount Received</span><strong>${money(s.received)}</strong></div><div class="stat-card"><span>Amount Pending</span><strong>${money(s.pending)}</strong></div><div class="stat-card"><span>Pending Orders</span><strong>${s.pendingOrders}</strong></div><div class="stat-card"><span>Completed Orders</span><strong>${s.completed}</strong></div></div><div class="section-card"><div class="section-title"><strong>Payment Overview</strong><span class="item-sub">${pct}% received</span></div><div class="progress-track"><div class="progress-bar" style="width:${pct}%"></div></div></div><div class="section-card"><div class="section-title"><strong>Recent Orders</strong><button class="link-btn" onclick="showPage('ordersPage')">View All</button></div>${recent.length?recent.map(o=>`<div class="recent-item"><div><div class="item-title">${esc(o.customerName)}</div><div class="item-sub">${esc(o.billNo)} · ${esc(o.status)}</div></div><div class="amount">${money(o.total)}</div></div>`).join(""):`<div class="empty-state">No orders yet. Create your first order.</div>`}</div><div class="action-grid"><button class="action-btn" onclick="showPage('newOrderPage')"><strong>New Order</strong><small>Create order and professional bill</small></button><button class="action-btn" onclick="showPage('productsPage')"><strong>Products & Services</strong><small>Manage your catalog</small></button></div>`}function renderOrders(){const d=getDB(),items=d.orders.filter(o=>state.orderFilter==="all"||o.status===state.orderFilter);$("ordersPage").innerHTML=`<div class="page-head"><div><p class="eyebrow">ORDERS</p><h1>Orders</h1><p class="muted">Live sales and payment records.</p></div></div><div class="filter-row"><button class="filter-chip ${state.orderFilter==="all"?"active":""}" onclick="state.orderFilter='all';renderOrders()">All</button><button class="filter-chip ${state.orderFilter==="Pending"?"active":""}" onclick="state.orderFilter='Pending';renderOrders()">Pending</button><button class="filter-chip ${state.orderFilter==="Completed"?"active":""}" onclick="state.orderFilter='Completed';renderOrders()">Completed</button></div><div class="section-card">${items.length?items.map(o=>`<div class="order-row"><div><div class="item-title">${esc(o.customerName)}</div><div class="item-sub">${esc(o.billNo)} · ${esc(o.phone)}</div><span class="status ${o.status==="Completed"?"completed":"pending"}">${esc(o.status)}</span></div><div style="text-align:right"><div class="amount">${money(o.total)}</div><div class="item-sub">Due ${money(Math.max(0,o.total-o.advance))}</div><button class="link-btn" onclick="openBill('${o.id}')">Bill</button></div></div>`).join(""):`<div class="empty-state">No orders found.</div>`}</div>`}function renderCustomers(){const d=getDB();$("customersPage").innerHTML=`<div class="page-head"><div><p class="eyebrow">CUSTOMERS</p><h1>Customers</h1><p class="muted">Customer spending and payment history.</p></div></div><input id="customerSearch" class="mx-input search-input" placeholder="Search customer or phone"><div id="customerList" class="section-card">${d.customers.length?d.customers.map(c=>`<div class="customer-row"><div><div class="item-title">${esc(c.name)}</div><div class="item-sub">${esc(c.phone)} · ${c.totalOrders||0} orders</div></div><div style="text-align:right"><div class="amount">${money(c.totalSpending)}</div><div class="item-sub">Due ${money(c.pendingAmount)}</div></div></div>`).join(""):`<div class="empty-state">Customers will appear automatically after orders.</div>`}</div>`;$("customerSearch").oninput=e=>{const q=e.target.value.toLowerCase();$$(".customer-row").forEach(x=>x.style.display=x.textContent.toLowerCase().includes(q)?"flex":"none")}}function renderProducts(){const d=getDB();$("productsPage").innerHTML=`<div class="page-head"><div><p class="eyebrow">CATALOG</p><h1>Products & Services</h1><p class="muted">Your business catalog.</p></div></div><button class="primary-btn" onclick="addProduct()">Add Product / Service</button><div class="section-card">${d.products.length?d.products.map(p=>`<div class="product-row"><div><div class="item-title">${esc(p.name)}</div><div class="item-sub">${esc(p.category||"Default")}</div></div><div style="text-align:right"><div class="amount">${money(p.price)}</div><button class="link-btn" onclick="editProduct('${p.id}')">Edit</button> <button class="link-btn" onclick="deleteProduct('${p.id}')">Delete</button></div></div>`).join(""):`<div class="empty-state">No products or services.</div>`}</div>`}function addProduct(){const n=prompt("Product or service name:");if(!n?.trim())return;const price=Number(prompt("Price:","0"));if(!Number.isFinite(price)||price<0)return toast("Invalid price");const d=getDB();d.products.push({id:uid("prd"),name:n.trim(),category:"Custom",price,active:true});saveDB(d);renderProducts();toast("Product added")}function editProduct(id){const d=getDB(),p=d.products.find(x=>x.id===id);if(!p)return;const n=prompt("Product or service name:",p.name);if(!n?.trim())return;const price=Number(prompt("Price:",p.price));if(!Number.isFinite(price)||price<0)return toast("Invalid price");p.name=n.trim();p.price=price;saveDB(d);renderProducts();toast("Product updated")}function deleteProduct(id){if(!confirm("Delete this product/service?"))return;const d=getDB();d.products=d.products.filter(x=>x.id!==id);saveDB(d);renderProducts();toast("Product deleted")}function renderNewOrder(){const d=getDB();$("newOrderPage").innerHTML=`<div class="page-head"><div><p class="eyebrow">NEW ORDER</p><h1>Create Order</h1><p class="muted">Create an order, calculate payment and generate a professional bill.</p></div></div><div class="form-card"><label>Customer Name<input id="orderCustomer" class="mx-input" placeholder="Customer name"></label><label>Mobile / WhatsApp<input id="orderPhone" class="mx-input" maxlength="10" placeholder="10-digit mobile number"></label><label>Product / Service<select id="orderProduct" class="mx-input">${d.products.map(p=>`<option value="${p.id}">${esc(p.name)} — ${money(p.price)}</option>`).join("")}</select></label><label>Quantity<input id="orderQuantity" class="mx-input" type="number" min="1" value="1"></label><label>Price<input id="orderPrice" class="mx-input" type="number" min="0" value="${d.products[0]?.price||0}"></label>${d.settings.deliveryDate?`<label>Delivery Date<input id="orderDelivery" class="mx-input" type="date"></label>`:""}${d.settings.advancePayment?`<label>Advance Payment<input id="orderAdvance" class="mx-input" type="number" min="0" value="0"></label>`:""}${d.settings.notes?`<label>Notes<textarea id="orderNotes" class="mx-input mx-textarea" placeholder="Order notes"></textarea></label>`:""}<div id="orderTotalPreview" class="section-card"></div><button class="primary-btn" onclick="saveOrder()">Save Order & Generate Bill</button></div>`;const product=$("orderProduct");product.onchange=()=>{const p=d.products.find(x=>x.id===product.value);$("orderPrice").value=p?.price||0;updateOrderTotal()};["orderQuantity","orderPrice","orderAdvance"].forEach(id=>{if($(id))$(id).oninput=updateOrderTotal});updateOrderTotal()}function updateOrderTotal(){const q=Math.max(1,Number($("orderQuantity")?.value||1)),p=Math.max(0,Number($("orderPrice")?.value||0)),total=q*p,a=Math.min(total,Math.max(0,Number($("orderAdvance")?.value||0)));if($("orderTotalPreview"))$("orderTotalPreview").innerHTML=`<div><span>Total</span> <strong>${money(total)}</strong></div><div class="item-sub">Received ${money(a)} · Balance ${money(total-a)}</div>`}function saveOrder(){const d=getDB(),name=$("orderCustomer").value.trim(),pno=phone($("orderPhone").value),product=d.products.find(x=>x.id===$("orderProduct").value),qty=Math.max(1,Number($("orderQuantity").value||1)),rate=Math.max(0,Number($("orderPrice").value||0)),total=qty*rate,advance=Math.min(total,Math.max(0,Number($("orderAdvance")?.value||0)));if(!name)return toast("Enter customer name");if(!/^[6-9]\\d{9}$/.test(pno))return toast("Enter a valid 10-digit mobile number");const existing=d.customers.find(c=>phone(c.phone)===pno),c=existing||{id:uid("cus"),name,phone:pno,totalOrders:0,totalSpending:0,pendingAmount:0};c.name=name;c.phone=pno;c.totalOrders=(c.totalOrders||0)+1;c.totalSpending=(c.totalSpending||0)+total;c.pendingAmount=(c.pendingAmount||0)+(total-advance);if(!existing)d.customers.push(c);d.counter=(d.counter||0)+1;const o={id:uid("ord"),billNo:"MX-"+new Date().getFullYear()+"-"+String(d.counter).padStart(5,"0"),customerId:c.id,customerName:name,phone:pno,items:[{name:product?.name||"Item",quantity:qty,price:rate,total:total}],total,advance,balance:total-advance,status:advance>=total?"Completed":"Pending",deliveryDate:$("orderDelivery")?.value||"",notes:$("orderNotes")?.value.trim()||"",createdAt:new Date().toISOString()};d.orders.unshift(o);saveDB(d);state.viewOrderId=o.id;showPage("billPage");toast("Order saved successfully")}function openBill(id){state.viewOrderId=id;showPage("billPage")}function renderBill(){const d=getDB(),o=d.orders.find(x=>x.id===state.viewOrderId),b=d.business||{};if(!o){$("billPage").innerHTML=`<div class="empty-state">Bill not found.</div>`;return}const received=Math.min(Number(o.total||0),Number(o.advance||0)),due=Math.max(0,Number(o.total||0)-received);$("billPage").innerHTML=`<div class="page-head"><div><p class="eyebrow">STEP 2 · PROFESSIONAL BILL</p><h1>Invoice</h1><p class="muted">Ready to print, save as PDF or share.</p></div></div><div class="bill-paper"><div class="bill-top"><div class="bill-brand"><strong>${esc(b.businessName||"ManageX")}</strong><small>${esc(b.businessAddress||"")}<br>Phone: ${esc(b.phoneNumber||"")}${b.gstin?"<br>GSTIN: "+esc(b.gstin):""}</small></div><div class="bill-meta"><strong>${esc(o.billNo)}</strong><br>${new Date(o.createdAt).toLocaleDateString("en-IN")}</div></div><div class="bill-customer"><strong>Bill To</strong><br><span class="item-sub">${esc(o.customerName)} · ${esc(o.phone)}</span></div><table class="bill-table"><thead><tr><th>Item</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody>${o.items.map(x=>`<tr><td>${esc(x.name)}</td><td>${x.quantity}</td><td>${money(x.price)}</td><td>${money(x.total)}</td></tr>`).join("")}</tbody></table><div class="bill-totals"><div><span>Subtotal</span><strong>${money(o.total)}</strong></div><div><span>Amount Received</span><strong>${money(received)}</strong></div><div class="bill-balance"><span>Balance Due</span><strong>${money(due)}</strong></div></div>${o.deliveryDate?`<div class="item-sub" style="margin-top:12px">Delivery Date: ${esc(o.deliveryDate)}</div>`:""}${o.notes?`<div class="item-sub" style="margin-top:7px">Notes: ${esc(o.notes)}</div>`:""}<div class="bill-footer">${esc(d.settings.billFooter)}</div></div><div class="form-actions bill-actions"><button class="secondary-btn" onclick="printBill()">Print / Save PDF</button><button class="setup-primary-btn" onclick="shareBillWhatsApp()">Share on WhatsApp</button></div>`}function printBill(){window.print()}function shareBillWhatsApp(){const d=getDB(),o=d.orders.find(x=>x.id===state.viewOrderId),b=d.business||{};if(!o)return;const p=phone(o.phone);if(!/^[6-9]\\d{9}$/.test(p))return toast("Customer WhatsApp number is missing");const received=Math.min(Number(o.total||0),Number(o.advance||0)),due=Math.max(0,Number(o.total||0)-received),lines=["Hello "+o.customerName+",","","Your bill from "+(b.businessName||"ManageX"),"Bill No: "+o.billNo,"Total: "+money(o.total),"Amount Received: "+money(received),"Balance Due: "+money(due),"","Thank you for your business."];window.open("https://wa.me/91"+p+"?text="+encodeURIComponent(lines.join("\\n")),"_blank")}function renderNewOrder(){const d=getDB();$("newOrderPage").innerHTML=`<div class="page-head"><div><p class="eyebrow">NEW ORDER</p><h1>Create Order</h1><p class="muted">Create an order, calculate payment and generate a professional bill.</p></div></div><div class="form-card"><label>Customer Name<input id="orderCustomer" class="mx-input" placeholder="Customer name"></label><label>Mobile / WhatsApp<input id="orderPhone" class="mx-input" maxlength="10" placeholder="10-digit mobile number"></label><label>Product / Service<select id="orderProduct" class="mx-input">${d.products.map(p=>`<option value="${p.id}">${esc(p.name)} — ${money(p.price)}</option>`).join("")}</select></label><label>Quantity<input id="orderQuantity" class="mx-input" type="number" min="1" value="1"></label><label>Price<input id="orderPrice" class="mx-input" type="number" min="0" value="${d.products[0]?.price||0}"></label>${d.settings.deliveryDate?`<label>Delivery Date<input id="orderDelivery" class="mx-input" type="date"></label>`:""}${d.settings.advancePayment?`<label>Advance Payment<input id="orderAdvance" class="mx-input" type="number" min="0" value="0"></label>`:""}${d.settings.notes?`<label>Notes<textarea id="orderNotes" class="mx-input mx-textarea" placeholder="Order notes"></textarea></label>`:""}<div id="orderTotalPreview" class="section-card"></div><button class="primary-btn" onclick="saveOrder()">Save Order & Generate Bill</button></div>`;const product=$("orderProduct");product.onchange=()=>{const p=d.products.find(x=>x.id===product.value);$("orderPrice").value=p?.price||0;updateOrderTotal()};["orderQuantity","orderPrice","orderAdvance"].forEach(id=>{if($(id))$(id).oninput=updateOrderTotal});updateOrderTotal()}function updateOrderTotal(){const q=Math.max(1,Number($("orderQuantity")?.value||1)),p=Math.max(0,Number($("orderPrice")?.value||0)),total=q*p,a=Math.min(total,Math.max(0,Number($("orderAdvance")?.value||0)));if($("orderTotalPreview"))$("orderTotalPreview").innerHTML=`<div><span>Total</span> <strong>${money(total)}</strong></div><div class="item-sub">Received ${money(a)} · Balance ${money(total-a)}</div>`}function saveOrder(){const d=getDB(),name=$("orderCustomer").value.trim(),pno=phone($("orderPhone").value),product=d.products.find(x=>x.id===$("orderProduct").value),qty=Math.max(1,Number($("orderQuantity").value||1)),rate=Math.max(0,Number($("orderPrice").value||0)),total=qty*rate,advance=Math.min(total,Math.max(0,Number($("orderAdvance")?.value||0)));if(!name)return toast("Enter customer name");if(!/^[6-9]\\d{9}$/.test(pno))return toast("Enter a valid 10-digit mobile number");const existing=d.customers.find(c=>phone(c.phone)===pno),c=existing||{id:uid("cus"),name,phone:pno,totalOrders:0,totalSpending:0,pendingAmount:0};c.name=name;c.phone=pno;c.totalOrders=(c.totalOrders||0)+1;c.totalSpending=(c.totalSpending||0)+total;c.pendingAmount=(c.pendingAmount||0)+(total-advance);if(!existing)d.customers.push(c);d.counter=(d.counter||0)+1;const o={id:uid("ord"),billNo:"MX-"+new Date().getFullYear()+"-"+String(d.counter).padStart(5,"0"),customerId:c.id,customerName:name,phone:pno,items:[{name:product?.name||"Item",quantity:qty,price:rate,total:total}],total,advance,balance:total-advance,status:advance>=total?"Completed":"Pending",deliveryDate:$("orderDelivery")?.value||"",notes:$("orderNotes")?.value.trim()||"",createdAt:new Date().toISOString()};d.orders.unshift(o);saveDB(d);state.viewOrderId=o.id;showPage("billPage");toast("Order saved successfully")}function openBill(id){state.viewOrderId=id;showPage("billPage")}function renderBill(){const d=getDB(),o=d.orders.find(x=>x.id===state.viewOrderId),b=d.business||{};if(!o){$("billPage").innerHTML=`<div class="empty-state">Bill not found.</div>`;return}const received=Math.min(Number(o.total||0),Number(o.advance||0)),due=Math.max(0,Number(o.total||0)-received);$("billPage").innerHTML=`<div class="page-head"><div><p class="eyebrow">STEP 2 · PROFESSIONAL BILL</p><h1>Invoice</h1><p class="muted">Ready to print, save as PDF or share.</p></div></div><div class="bill-paper"><div class="bill-top"><div class="bill-brand"><strong>${esc(b.businessName||"ManageX")}</strong><small>${esc(b.businessAddress||"")}<br>Phone: ${esc(b.phoneNumber||"")}${b.gstin?"<br>GSTIN: "+esc(b.gstin):""}</small></div><div class="bill-meta"><strong>${esc(o.billNo)}</strong><br>${new Date(o.createdAt).toLocaleDateString("en-IN")}</div></div><div class="bill-customer"><strong>Bill To</strong><br><span class="item-sub">${esc(o.customerName)} · ${esc(o.phone)}</span></div><table class="bill-table"><thead><tr><th>Item</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody>${o.items.map(x=>`<tr><td>${esc(x.name)}</td><td>${x.quantity}</td><td>${money(x.price)}</td><td>${money(x.total)}</td></tr>`).join("")}</tbody></table><div class="bill-totals"><div><span>Subtotal</span><strong>${money(o.total)}</strong></div><div><span>Amount Received</span><strong>${money(received)}</strong></div><div class="bill-balance"><span>Balance Due</span><strong>${money(due)}</strong></div></div>${o.deliveryDate?`<div class="item-sub" style="margin-top:12px">Delivery Date: ${esc(o.deliveryDate)}</div>`:""}${o.notes?`<div class="item-sub" style="margin-top:7px">Notes: ${esc(o.notes)}</div>`:""}<div class="bill-footer">${esc(d.settings.billFooter)}</div></div><div class="form-actions bill-actions"><button class="secondary-btn" onclick="printBill()">Print / Save PDF</button><button class="setup-primary-btn" onclick="shareBillWhatsApp()">Share on WhatsApp</button></div>`}function printBill(){window.print()}function shareBillWhatsApp(){const d=getDB(),o=d.orders.find(x=>x.id===state.viewOrderId),b=d.business||{};if(!o)return;const p=phone(o.phone);if(!/^[6-9]\\d{9}$/.test(p))return toast("Customer WhatsApp number is missing");const received=Math.min(Number(o.total||0),Number(o.advance||0)),due=Math.max(0,Number(o.total||0)-received),lines=["Hello "+o.customerName+",","","Your bill from "+(b.businessName||"ManageX"),"Bill No: "+o.billNo,"Total: "+money(o.total),"Amount Received: "+money(received),"Balance Due: "+money(due),"","Thank you for your business."];window.open("https://wa.me/91"+p+"?text="+encodeURIComponent(lines.join("\\n")),"_blank")}function renderSettings(){const d=getDB(),b=d.business||{};$("settingsPage").innerHTML=`<div class="page-head"><div><p class="eyebrow">SETTINGS</p><h1>Settings</h1><p class="muted">Manage your business and order preferences.</p></div></div><div class="form-card"><h3>Business Profile</h3><label>Business Name<input id="setBusinessName" class="mx-input" value="${esc(b.businessName)}"></label><label>Owner Name<input id="setOwnerName" class="mx-input" value="${esc(b.ownerName)}"></label><label>Phone<input id="setPhone" class="mx-input" maxlength="10" value="${esc(b.phoneNumber)}"></label><label>WhatsApp<input id="setWhatsApp" class="mx-input" maxlength="10" value="${esc(b.whatsappNumber)}"></label><label>Address<textarea id="setAddress" class="mx-input mx-textarea">${esc(b.businessAddress)}</textarea></label><label>GSTIN<input id="setGSTIN" class="mx-input" maxlength="15" value="${esc(b.gstin)}"></label><label>Tagline<input id="setTagline" class="mx-input" value="${esc(b.tagline)}"></label><button class="primary-btn" onclick="saveProfile()">Save Profile</button></div><div class="form-card"><h3>Order Settings</h3><label class="toggle-row"><span>Enable delivery date</span><input id="setDelivery" type="checkbox" ${d.settings.deliveryDate?"checked":""}></label><label class="toggle-row"><span>Enable advance payment</span><input id="setAdvance" type="checkbox" ${d.settings.advancePayment?"checked":""}></label><label class="toggle-row"><span>Enable notes</span><input id="setNotes" type="checkbox" ${d.settings.notes?"checked":""}></label><label>Bill Footer<textarea id="setFooter" class="mx-input mx-textarea">${esc(d.settings.billFooter)}</textarea></label><button class="primary-btn" onclick="saveSettings()">Save Settings</button></div><div class="form-card"><h3>Products & Services</h3><button class="secondary-btn" onclick="showPage('productsPage')">Open Products & Services</button></div><div class="form-card"><h3>Test Data</h3><p class="muted">Clear local test data and start ManageX from the beginning.</p><button class="danger-btn" onclick="resetData()">Reset ManageX Data</button></div>`}function saveProfile(){const d=getDB(),b=d.business||{},p=phone($("setPhone").value),w=phone($("setWhatsApp").value);if(!$("setBusinessName").value.trim()||!$("setOwnerName").value.trim())return toast("Business and owner name are required");if(!/^[6-9]\\d{9}$/.test(p))return toast("Invalid phone number");if(w&&!/^[6-9]\\d{9}$/.test(w))return toast("Invalid WhatsApp number");b.businessName=$("setBusinessName").value.trim();b.ownerName=$("setOwnerName").value.trim();b.phoneNumber=p;b.whatsappNumber=w||p;b.businessAddress=$("setAddress").value.trim();b.gstin=$("setGSTIN").value.trim().toUpperCase();b.tagline=$("setTagline").value.trim();d.business=b;saveDB(d);loadHeader();showPage("settingsPage");toast("Profile saved")}function saveSettings(){const d=getDB();d.settings.deliveryDate=$("setDelivery").checked;d.settings.advancePayment=$("setAdvance").checked;d.settings.notes=$("setNotes").checked;d.settings.billFooter=$("setFooter").value.trim()||"Thank you for your business.";saveDB(d);toast("Settings saved")}function resetData(){if(!confirm("Clear all ManageX test data?"))return;localStorage.removeItem(KEY);location.reload()}function init(){const d=getDB();$$(".business-type-card").forEach(card=>card.addEventListener("click",()=>selectBusiness(card)));$("continueBusinessBtn").addEventListener("click",openDetails);$("backToBusinessBtn").addEventListener("click",backBusiness);$("finishSetupBtn").addEventListener("click",finishSetup);$$(".nav-item").forEach(item=>item.addEventListener("click",()=>showPage(item.dataset.page)));$("notificationBtn").addEventListener("click",()=>toast("No new notifications"));if(d.business?.businessName&&d.business?.ownerName&&d.business?.phoneNumber){state.businessType=d.business.businessType;openApp()}else{openSetup()}}document.addEventListener("DOMContentLoaded",init);
+"use strict";
+
+const MANAGEX={
+  version:"1.0.0",
+  storageKey:"managex_data"
+};
+
+const BUSINESS_CONFIG={
+  "general-store":{name:"General Store",catalog:["Groceries","Household Items","Personal Care"]},
+  "supermarket":{name:"Supermarket",catalog:["Groceries","Beverages","Household Items","Personal Care"]},
+  "clothing":{name:"Clothing & Fashion",catalog:["Shirt","Pant","T-Shirt","Jeans","Dress"]},
+  "footwear":{name:"Footwear",catalog:["Shoes","Sandals","Slippers","Sports Shoes"]},
+  "electronics":{name:"Electronics",catalog:["Mobile","Television","Speaker","Accessories"]},
+  "mobile-accessories":{name:"Mobile & Accessories",catalog:["Mobile","Charger","Earphones","Cover","Screen Guard"]},
+  "hardware":{name:"Hardware",catalog:["Tools","Fasteners","Pipes","Electrical Items"]},
+  "furniture":{name:"Furniture",catalog:["Chair","Table","Sofa","Bed","Cupboard"]},
+  "stationery":{name:"Stationery",catalog:["Notebook","Pen","Printing","School Supplies"]},
+  "jewellery":{name:"Jewellery",catalog:["Ring","Necklace","Bracelet","Earrings"]},
+  "restaurant":{name:"Restaurant",catalog:["Pizza","Burger","Sandwich","Rice","Beverage"]},
+  "cafe":{name:"Café",catalog:["Coffee","Tea","Sandwich","Pastry","Beverage"]},
+  "bakery":{name:"Bakery",catalog:["Cake","Bread","Pastry","Cookies"]},
+  "fast-food":{name:"Fast Food",catalog:["Burger","Pizza","Fries","Sandwich","Beverage"]},
+  "catering":{name:"Catering / Tiffin",catalog:["Tiffin","Catering Package","Meal","Event Catering"]},
+  "sweet-shop":{name:"Sweet Shop",catalog:["Ladoo","Barfi","Pedha","Jalebi","Gift Box"]},
+  "salon":{name:"Salon / Barber",catalog:["Haircut","Beard","Hair Colour","Facial","Hair Spa"]},
+  "beauty-parlour":{name:"Beauty Parlour",catalog:["Facial","Makeup","Hair Styling","Manicure","Pedicure"]},
+  "spa":{name:"Spa",catalog:["Massage","Therapy","Body Spa","Facial"]},
+  "fitness":{name:"Fitness / Gym",catalog:["Monthly Membership","Personal Training","Annual Membership","Consultation"]},
+  "tailoring":{name:"Tailoring / Boutique",catalog:["Shirt","Pant","Kurta","Uniform","Alteration"]},
+  "laundry":{name:"Laundry",catalog:["Wash","Dry Clean","Ironing","Express Laundry"]},
+  "mobile-repair":{name:"Mobile Repair",catalog:["Screen Repair","Battery Replacement","Software Service","Charging Port"]},
+  "computer-service":{name:"Computer Service",catalog:["Laptop Repair","Desktop Repair","Software Installation","Upgrade"]},
+  "electronics-repair":{name:"Electronics Repair",catalog:["TV Repair","Speaker Repair","PCB Repair","Appliance Repair"]},
+  "automobile":{name:"Automobile / Garage",catalog:["Service","Oil Change","Brake Service","Repair"]},
+  "ac-appliance":{name:"AC / Appliance Service",catalog:["AC Service","AC Repair","Washing Machine","Refrigerator"]},
+  "home-services":{name:"Home Services",catalog:["Cleaning","Plumbing","Electrical","Pest Control"]},
+  "printing":{name:"Printing / Xerox",catalog:["Xerox","Color Print","Photo Print","Binding"]},
+  "photography":{name:"Photography",catalog:["Photo Session","Wedding Photography","Video Shoot","Album"]},
+  "graphic-design":{name:"Graphic Design",catalog:["Logo Design","Poster","Social Media Design","Branding"]},
+  "digital-marketing":{name:"Digital Marketing",catalog:["Social Media Management","SEO","Advertising","Content Creation"]},
+  "consultancy":{name:"Consultancy",catalog:["Consultation","Professional Service","Project","Advisory"]},
+  "tuition":{name:"Tuition / Coaching",catalog:["Monthly Tuition","Course","Test Series","Personal Coaching"]},
+  "manufacturing":{name:"Manufacturing",catalog:["Product","Custom Order","Bulk Order","Production Job"]},
+  "fabrication":{name:"Fabrication / Welding",catalog:["Gate","Grill","Railing","Custom Fabrication"]},
+  "machine-workshop":{name:"Machine Workshop",catalog:["Machining","Turning","Milling","Custom Job"]},
+  "other":{name:"Other Business",catalog:["Product / Service"]}
+};
+
+const state={
+  businessType:"",
+  orderFilter:"all",
+  currentOrder:null
+};
+
+function $(id){
+  return document.getElementById(id);
+}
+
+function $$(selector){
+  return document.querySelectorAll(selector);
+}
+
+function uid(prefix){
+  return prefix+"_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,8);
+}
+
+function money(value){
+  return "₹"+Number(value||0).toLocaleString("en-IN",{minimumFractionDigits:0,maximumFractionDigits:2});
+}
+
+function cleanPhone(value){
+  return String(value||"").replace(/\D/g,"");
+}
+
+function esc(value){
+  return String(value??"").replace(/[&<>"']/g,function(c){
+    return {
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+    }[c];
+  });
+}
+
+function defaultDB(){
+  return {
+    version:MANAGEX.version,
+    business:null,
+    products:[],
+    customers:[],
+    orders:[],
+    settings:{
+      deliveryDate:true,
+      advancePayment:true,
+      notes:true,
+      gst:true,
+      billFooter:"Thank you for your business.",
+      theme:"light"
+    },
+    counters:{
+      order:0
+    }
+  };
+}
+
+function getDB(){
+  try{
+    const raw=localStorage.getItem(MANAGEX.storageKey);
+    if(!raw)return defaultDB();
+    const data=JSON.parse(raw);
+    const base=defaultDB();
+    return Object.assign(base,data,{
+      settings:Object.assign(base.settings,data.settings||{}),
+      counters:Object.assign(base.counters,data.counters||{})
+    });
+  }catch(e){
+    return defaultDB();
+  }
+}
+
+function saveDB(db){
+  localStorage.setItem(MANAGEX.storageKey,JSON.stringify(db));
+}
+
+function config(type){
+  return BUSINESS_CONFIG[type]||BUSINESS_CONFIG.other;
+}
+
+function toast(message){
+  let t=$("managexToast");
+  if(!t){
+    t=document.createElement("div");
+    t.id="managexToast";
+    t.className="managex-toast";
+    document.body.appendChild(t);
+  }
+  t.textContent=message;
+  t.classList.add("show");
+  clearTimeout(t._timer);
+  t._timer=setTimeout(function(){
+    t.classList.remove("show");
+  },2200);
+}
+
+function showPage(pageId){
+  $$(".app-page").forEach(function(page){
+    page.classList.remove("active-page");
+    page.style.display="none";
+  });
+
+  $$(".nav-item").forEach(function(item){
+    item.classList.remove("active");
+  });
+
+  const page=$(pageId);
+  if(page){
+    page.classList.add("active-page");
+    page.style.display="block";
+  }
+
+  $$(".nav-item").forEach(function(item){
+    if(item.dataset.page===pageId){
+      item.classList.add("active");
+    }
+  });
+
+  window.scrollTo(0,0);
+
+  if(pageId==="homePage")renderDashboard();
+  if(pageId==="ordersPage")renderOrders();
+  if(pageId==="customersPage")renderCustomers();
+  if(pageId==="productsPage")renderProducts();
+}
+
+function openMainApp(){
+  const setup=$("setupPage");
+  const main=$("mainApp");
+
+  if(setup)setup.style.display="none";
+  if(main)main.style.display="block";
+
+  showPage("homePage");
+  updateBusinessUI();
+}
+
+function openSetup(){
+  const setup=$("setupPage");
+  const main=$("mainApp");
+
+  if(setup)setup.style.display="block";
+  if(main)main.style.display="none";
+}
+
+function selectBusinessType(card){
+  if(!card)return;
+
+  $$(".business-type-card").forEach(function(c){
+    c.classList.remove("selected");
+  });
+
+  card.classList.add("selected");
+  state.businessType=card.dataset.businessType||"";
+
+  const error=$("businessTypeError");
+  if(error)error.textContent="";
+}
+
+function continueSetup(){
+  if(!state.businessType){
+    const error=$("businessTypeError");
+    if(error)error.textContent="Please select your business type.";
+    toast("Please select a business type");
+    return;
+  }
+
+  const db=getDB();
+
+  db.business=Object.assign({},db.business||{},{
+    businessType:state.businessType,
+    businessDisplayName:config(state.businessType).name,
+    updatedAt:new Date().toISOString()
+  });
+
+  saveDB(db);
+
+  openMainApp();
+  toast("Business type saved");
+}
+
+function updateBusinessUI(){
+  const db=getDB();
+  const b=db.business;
+  if(!b)return;
+
+  const type=config(b.businessType);
+
+  const header=$("headerBusinessType");
+  if(header)header.textContent=type.name;
+
+  const welcome=document.querySelector("#homePage .page-heading p");
+  if(welcome){
+    welcome.textContent=b.businessName
+      ?"Welcome to "+b.businessName+". Manage your business from one place."
+      :"Manage your business from one place.";
+  }
+
+  const description=$("catalogDescription");
+  if(description){
+    description.textContent="Manage products and services for "+type.name+".";
+  }
+}
+
+function paymentReceived(order){
+  const total=Number(order.total||0);
+  const received=Number(
+    order.amountReceived!==undefined
+      ?order.amountReceived
+      :(order.advance||0)
+  );
+
+  return Math.min(total,Math.max(0,received));
+}
+
+function paymentPending(order){
+  return Math.max(0,Number(order.total||0)-paymentReceived(order));
+}
+
+function orderStatus(order){
+  return paymentPending(order)<=0?"completed":"pending";
+}
+
+function syncCustomers(db){
+  const map={};
+
+  db.orders.forEach(function(order){
+    const phone=cleanPhone(order.customerPhone);
+    if(!phone)return;
+
+    if(!map[phone]){
+      map[phone]={
+        id:uid("cus"),
+        name:order.customerName||"Customer",
+        phone:phone,
+        totalOrders:0,
+        totalSpending:0,
+        pendingAmount:0,
+        createdAt:order.createdAt||new Date().toISOString()
+      };
+    }
+
+    map[phone].name=order.customerName||map[phone].name;
+    map[phone].totalOrders++;
+    map[phone].totalSpending+=Number(order.total||0);
+    map[phone].pendingAmount+=paymentPending(order);
+  });
+
+  db.customers=Object.values(map);
+}
+
+function renderDashboard(){
+  const db=getDB();
+  const orders=db.orders||[];
+
+  const total=orders.reduce(function(sum,o){
+    return sum+Number(o.total||0);
+  },0);
+
+  const received=orders.reduce(function(sum,o){
+    return sum+paymentReceived(o);
+  },0);
+
+  const pending=orders.reduce(function(sum,o){
+    return sum+paymentPending(o);
+  },0);
+
+  if($("totalOrders"))$("totalOrders").textContent=orders.length;
+  if($("pendingOrders"))$("pendingOrders").textContent=orders.filter(o=>orderStatus(o)==="pending").length;
+  if($("completedOrders"))$("completedOrders").textContent=orders.filter(o=>orderStatus(o)==="completed").length;
+  if($("totalSales"))$("totalSales").textContent=money(total);
+  if($("amountReceived"))$("amountReceived").textContent=money(received);
+  if($("amountPending"))$("amountPending").textContent=money(pending);
+
+  const progress=$("paymentProgress");
+  if(progress){
+    progress.style.width=(total?Math.min(100,received/total*100):0)+"%";
+  }
+
+  let box=$("recentOrdersList");
+
+  if(!box){
+    box=document.querySelector("#homePage .empty-state");
+  }
+
+  if(!box)return;
+
+  const recent=orders.slice(0,5);
+
+  if(!recent.length){
+    if(box.id==="recentOrdersList"){
+      box.innerHTML='<div class="empty-state"><div class="empty-icon">ORD</div><h3>No orders yet</h3><p>Your recent orders will appear here.</p></div>';
+    }
+    return;
+  }
+
+  if(box.id==="recentOrdersList"){
+    box.innerHTML=recent.map(orderCard).join("");
+  }else{
+    const old=document.querySelector("#homePage .empty-state");
+    if(old){
+      old.outerHTML='<div id="recentOrdersList" class="dynamic-list">'+recent.map(orderCard).join("")+"</div>";
+    }
+  }
+
+  bindDynamicActions();
+}
+
+function orderCard(order){
+  return '<div class="data-card order-card">'+
+    '<div>'+
+    '<strong>'+esc(order.orderNumber||"Order")+'</strong>'+
+    '<p>'+esc(order.customerName||"Customer")+' · '+money(order.total)+'</p>'+
+    '<small>'+esc(orderStatus(order))+' · Received '+money(paymentReceived(order))+' · Pending '+money(paymentPending(order))+'</small>'+
+    '</div>'+
+    '<button type="button" class="small-primary-button" data-view-order="'+esc(order.id)+'">View</button>'+
+    '</div>';
+}
+
+function renderOrders(){
+  const box=$("ordersList");
+  if(!box)return;
+
+  const db=getDB();
+
+  let orders=db.orders||[];
+
+  if(state.orderFilter!=="all"){
+    orders=orders.filter(function(o){
+      return orderStatus(o)===state.orderFilter;
+    });
+  }
+
+  if(!orders.length){
+    box.innerHTML='<div class="empty-state"><div class="empty-icon">ORD</div><h3>No orders found</h3><p>Create your first order to see it here.</p><button type="button" class="small-primary-button" data-action="new-order">New Order</button></div>';
+    bindDynamicActions();
+    return;
+  }
+
+  box.innerHTML=orders.map(function(o){
+    return orderCard(o)+
+      '<div class="order-actions">'+
+      '<button type="button" class="small-primary-button" data-view-order="'+esc(o.id)+'">Details</button>'+
+      (paymentPending(o)>0?'<button type="button" class="small-primary-button" data-collect-order="'+esc(o.id)+'">Collect '+money(paymentPending(o))+'</button>':"")+
+      '<button type="button" class="small-secondary-button" data-edit-order="'+esc(o.id)+'">Edit</button>'+
+      '<button type="button" class="small-secondary-button" data-delete-order="'+esc(o.id)+'">Delete</button>'+
+      '</div>';
+  }).join("");
+
+  bindDynamicActions();
+}
+
+function renderCustomers(){
+  const box=$("customersList");
+  if(!box)return;
+
+  const query=String($("customerSearch")?.value||"").toLowerCase().trim();
+
+  const customers=getDB().customers.filter(function(c){
+    return (String(c.name)+" "+String(c.phone)).toLowerCase().includes(query);
+  });
+
+  if(!customers.length){
+    box.innerHTML='<div class="empty-state"><div class="empty-icon">CUS</div><h3>No customers found</h3><p>Customers will appear here after you create orders.</p></div>';
+    return;
+  }
+
+  box.innerHTML=customers.map(function(c){
+    return '<div class="data-card">'+
+      '<div><strong>'+esc(c.name)+'</strong><p>'+esc(c.phone)+'</p><small>'+c.totalOrders+' orders · Pending '+money(c.pendingAmount)+'</small></div>'+
+      '<div><strong>'+money(c.totalSpending)+'</strong><div class="order-actions">'+
+      '<button type="button" class="small-primary-button" data-customer="'+esc(c.id)+'">View</button>'+
+      '<button type="button" class="small-secondary-button" data-customer-new="'+esc(c.id)+'">New Order</button>'+
+      '</div></div>'+
+      '</div>';
+  }).join("");
+
+  bindDynamicActions();
+}
+
+function renderProducts(){
+  const box=$("productsList");
+  if(!box)return;
+
+  const products=getDB().products||[];
+
+  if(!products.length){
+    box.innerHTML='<div class="empty-state"><div class="empty-icon">CAT</div><h3>No products or services</h3><p>Add your first product or service.</p><button type="button" class="small-primary-button" data-action="add-product">Add Product</button></div>';
+    bindDynamicActions();
+    return;
+  }
+
+  box.innerHTML=products.map(function(p){
+    return '<div class="data-card">'+
+      '<div><strong>'+esc(p.name)+'</strong><p>'+esc(p.category||"General")+'</p></div>'+
+      '<div><strong>'+money(p.price)+'</strong><div class="order-actions">'+
+      '<button type="button" class="small-primary-button" data-edit-product="'+esc(p.id)+'">Edit</button>'+
+      '<button type="button" class="small-secondary-button" data-delete-product="'+esc(p.id)+'">Delete</button>'+
+      '</div></div>'+
+      '</div>';
+  }).join("");
+
+  bindDynamicActions();
+}
+
+function addProduct(){
+  const name=prompt("Product / Service name:");
+  if(!name||!name.trim())return;
+
+  const price=Number(prompt("Price:","0"));
+  if(!Number.isFinite(price)||price<0){
+    toast("Enter a valid price");
+    return;
+  }
+
+  const category=prompt("Category:","General")||"General";
+  const db=getDB();
+
+  db.products.push({
+    id:uid("prd"),
+    name:name.trim(),
+    category:category.trim()||"General",
+    price:price,
+    active:true,
+    createdAt:new Date().toISOString()
+  });
+
+  saveDB(db);
+  renderProducts();
+  toast("Product added");
+}
+
+function editProduct(id){
+  const db=getDB();
+  const product=db.products.find(p=>p.id===id);
+  if(!product)return;
+
+  const name=prompt("Product / Service name:",product.name);
+  if(!name||!name.trim())return;
+
+  const price=Number(prompt("Price:",product.price));
+  if(!Number.isFinite(price)||price<0){
+    toast("Enter a valid price");
+    return;
+  }
+
+  const category=prompt("Category:",product.category||"General");
+
+  product.name=name.trim();
+  product.price=price;
+  product.category=(category||product.category||"General").trim();
+
+  saveDB(db);
+  renderProducts();
+  toast("Product updated");
+}
+
+function deleteProduct(id){
+  if(!confirm("Delete this product or service?"))return;
+
+  const db=getDB();
+  db.products=db.products.filter(p=>p.id!==id);
+  saveDB(db);
+  renderProducts();
+  toast("Product deleted");
+}
+
+function openNewOrder(existing){
+  const db=getDB();
+  const order=existing||null;
+
+  const modal=document.createElement("div");
+  modal.id="managexOrderModal";
+  modal.className="managex-modal show";
+
+  const items=order?(order.items||[]):[];
+
+  modal.innerHTML=
+    '<div class="modal-card">'+
+    '<div class="modal-head"><div><span class="page-eyebrow">SALES</span><h2>'+(order?"Edit Order":"New Order")+'</h2></div><button type="button" class="modal-close" id="closeOrderModal">×</button></div>'+
+    '<label>Customer Name *</label><input id="mxOrderName" class="mx-input" value="'+esc(order?.customerName||'')+'" placeholder="Customer name">'+
+    '<label>Mobile / WhatsApp *</label><input id="mxOrderPhone" class="mx-input" maxlength="10" inputmode="numeric" value="'+esc(order?.customerPhone||'')+'" placeholder="10-digit mobile number">'+
+    '<label>Product / Service</label><select id="mxOrderProduct" class="mx-input"><option value="">Select product / service</option>'+db.products.map(p=>'<option value="'+esc(p.id)+'">'+esc(p.name)+' — '+money(p.price)+'</option>').join("")+'</select>'+
+    '<label>Quantity</label><input id="mxOrderQty" class="mx-input" type="number" min="1" value="1">'+
+    '<label>Price</label><input id="mxOrderPrice" class="mx-input" type="number" min="0" step="0.01" value="">'+
+    '<button type="button" class="small-primary-button" id="mxAddItem">Add Item</button>'+
+    '<div id="mxOrderItems"></div>'+
+    '<label>Notes</label><textarea id="mxOrderNotes" class="mx-input mx-textarea" rows="3">'+esc(order?.notes||'')+'</textarea>'+
+    '<label>Delivery Date</label><input id="mxOrderDate" class="mx-input" type="date" value="'+esc(order?.deliveryDate||'')+'">'+
+    '<label>Advance Payment</label><input id="mxOrderAdvance" class="mx-input" type="number" min="0" step="0.01" value="'+Number(paymentReceived(order)||0)+'">'+
+    '<div id="mxOrderSummary" class="order-summary-box"></div>'+
+    '<div id="mxOrderError" class="form-error"></div>'+
+    '<button type="button" class="setup-primary-btn" id="mxSaveOrder">'+(order?"Update Order":"Save Order")+'</button>'+
+    '</div>';
+
+  document.body.appendChild(modal);
+
+  let workingItems=items.map(function(i){
+    return Object.assign({},i);
+  });
+
+  function updateItems(){
+    const box=$("mxOrderItems");
+
+    if(!workingItems.length){
+      box.innerHTML='<p class="muted">No items added yet.</p>';
+    }else{
+      box.innerHTML=workingItems.map(function(item,index){
+        return '<div class="data-card"><div><strong>'+esc(item.name)+'</strong><p>'+item.quantity+' × '+money(item.price)+'</p></div><div><strong>'+money(item.total)+'</strong><button type="button" class="small-secondary-button" data-remove-mx-item="'+index+'">Remove</button></div></div>';
+      }).join("");
+    }
+
+    const total=workingItems.reduce((s,i)=>s+Number(i.total||0),0);
+    const advance=Math.max(0,Number($("mxOrderAdvance").value||0));
+    const received=Math.min(total,advance);
+
+    $("mxOrderSummary").innerHTML=
+      "<strong>Total: "+money(total)+"</strong><br>Received: "+money(received)+"<br>Balance: "+money(Math.max(0,total-received));
+
+    $$("[data-remove-mx-item]").forEach(function(btn){
+      btn.onclick=function(){
+        workingItems.splice(Number(btn.dataset.removeMxItem),1);
+        updateItems();
+      };
+    });
+  }
+
+  $("closeOrderModal").onclick=function(){
+    modal.remove();
+  };
+
+  $("mxOrderProduct").onchange=function(){
+    const p=db.products.find(x=>x.id===this.value);
+    if(p)$("mxOrderPrice").value=p.price;
+  };
+
+  $("mxAddItem").onclick=function(){
+    const product=db.products.find(p=>p.id===$("mxOrderProduct").value);
+    const qty=Number($("mxOrderQty").value);
+    const price=Number($("mxOrderPrice").value||product?.price||0);
+
+    if(!product){
+      toast("Select a product or service");
+      return;
+    }
+
+    if(!Number.isFinite(qty)||qty<1){
+      toast("Quantity must be at least 1");
+      return;
+    }
+
+    if(!Number.isFinite(price)||price<0){
+      toast("Enter a valid price");
+      return;
+    }
+
+    workingItems.push({
+      id:uid("item"),
+      productId:product.id,
+      name:product.name,
+      quantity:qty,
+      price:price,
+      total:qty*price
+    });
+
+    $("mxOrderPrice").value="";
+    $("mxOrderQty").value="1";
+    updateItems();
+  };
+
+  $("mxOrderAdvance").oninput=updateItems;
+
+  $("mxSaveOrder").onclick=function(){
+    const name=$("mxOrderName").value.trim();
+    const phone=cleanPhone($("mxOrderPhone").value);
+    const total=workingItems.reduce((s,i)=>s+Number(i.total||0),0);
+    const received=Number($("mxOrderAdvance").value||0);
+    const error=$("mxOrderError");
+
+    error.textContent="";
+
+    if(!name){
+      error.textContent="Customer name is required.";
+      return;
+    }
+
+    if(!/^[6-9]\d{9}$/.test(phone)){
+      error.textContent="Enter a valid 10-digit Indian mobile number.";
+      return;
+    }
+
+    if(!workingItems.length){
+      error.textContent="Add at least one product or service.";
+      return;
+    }
+
+    if(!Number.isFinite(received)||received<0||received>total){
+      error.textContent="Advance payment cannot be greater than total.";
+      return;
+    }
+
+    if(order){
+      const fresh=getDB();
+      const target=fresh.orders.find(o=>o.id===order.id);
+      if(!target)return;
+
+      target.customerName=name;
+      target.customerPhone=phone;
+      target.items=workingItems;
+      target.total=total;
+      target.amountReceived=received;
+      target.advance=received;
+      target.balance=Math.max(0,total-received);
+      target.notes=$("mxOrderNotes").value.trim();
+      target.deliveryDate=$("mxOrderDate").value;
+      target.status=target.balance<=0?"completed":"pending";
+      target.updatedAt=new Date().toISOString();
+
+      syncCustomers(fresh);
+      saveDB(fresh);
+      modal.remove();
+      refreshAll();
+      showBill(target.id);
+      toast("Order updated");
+      return;
+    }
+
+    const fresh=getDB();
+    fresh.counters.order++;
+
+    const newOrder={
+      id:uid("ord"),
+      orderNumber:"MX-"+String(fresh.counters.order).padStart(4,"0"),
+      customerName:name,
+      customerPhone:phone,
+      items:workingItems,
+      total:total,
+      amountReceived:received,
+      advance:received,
+      balance:Math.max(0,total-received),
+      notes:$("mxOrderNotes").value.trim(),
+      deliveryDate:$("mxOrderDate").value,
+      status:total-received<=0?"completed":"pending",
+      createdAt:new Date().toISOString()
+    };
+
+    fresh.orders.unshift(newOrder);
+    syncCustomers(fresh);
+    saveDB(fresh);
+
+    modal.remove();
+    refreshAll();
+    showBill(newOrder.id);
+    toast("Order saved");
+  };
+
+  updateItems();
+     }
+function collectPayment(id){
+  const db=getDB();
+  const order=db.orders.find(o=>o.id===id);
+  if(!order)return;
+
+  const pending=paymentPending(order);
+
+  if(pending<=0){
+    toast("Payment is already complete");
+    return;
+  }
+
+  const amount=Number(prompt("Enter payment received:",pending));
+
+  if(!Number.isFinite(amount)||amount<=0){
+    return;
+  }
+
+  if(amount>pending){
+    toast("Payment cannot exceed pending amount");
+    return;
+  }
+
+  order.amountReceived=paymentReceived(order)+amount;
+  order.advance=order.amountReceived;
+  order.balance=Math.max(0,Number(order.total||0)-order.amountReceived);
+  order.status=order.balance<=0?"completed":"pending";
+
+  syncCustomers(db);
+  saveDB(db);
+  refreshAll();
+  toast("Payment recorded");
+}
+
+function deleteOrder(id){
+  const db=getDB();
+  const order=db.orders.find(o=>o.id===id);
+  if(!order)return;
+
+  if(!confirm("Delete "+(order.orderNumber||"this order")+"?"))return;
+
+  db.orders=db.orders.filter(o=>o.id!==id);
+  syncCustomers(db);
+  saveDB(db);
+  refreshAll();
+  toast("Order deleted");
+}
+
+function showBill(id){
+  const db=getDB();
+  const order=db.orders.find(o=>o.id===id);
+  if(!order)return;
+
+  state.currentOrder=order;
+
+  const b=db.business||{};
+  const received=paymentReceived(order);
+  const pending=paymentPending(order);
+
+  const modal=document.createElement("div");
+  modal.id="managexBillModal";
+  modal.className="managex-modal show";
+
+  modal.innerHTML=
+    '<div class="modal-card">'+
+    '<div class="modal-head"><div><span class="page-eyebrow">BILL</span><h2>'+esc(b.businessName||"ManageX Business")+'</h2></div><button type="button" class="modal-close" id="closeBill">×</button></div>'+
+    '<div class="bill-inner">'+
+    '<div class="bill-header"><div><strong>'+esc(b.businessName||"ManageX Business")+'</strong><p>'+esc(b.businessAddress||"")+'</p><p>'+esc(b.phoneNumber||"")+'</p></div><strong>'+esc(order.orderNumber)+'</strong></div>'+
+    '<hr>'+
+    '<p><strong>Customer:</strong> '+esc(order.customerName)+'</p>'+
+    '<p><strong>Phone:</strong> '+esc(order.customerPhone)+'</p>'+
+    '<p><strong>Date:</strong> '+new Date(order.createdAt).toLocaleDateString("en-IN")+'</p>'+
+    '<table class="bill-table"><thead><tr><th>Item</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody>'+
+    (order.items||[]).map(function(i){
+      return '<tr><td>'+esc(i.name)+'</td><td>'+i.quantity+'</td><td>'+money(i.price)+'</td><td>'+money(i.total)+'</td></tr>';
+    }).join("")+
+    '</tbody></table>'+
+    '<div class="bill-total"><p>Subtotal: <strong>'+money(order.total)+'</strong></p><p>Amount Received: <strong>'+money(received)+'</strong></p><p>Balance Due: <strong>'+money(pending)+'</strong></p></div>'+
+    '<p class="bill-footer">'+esc(db.settings.billFooter||"Thank you for your business.")+'</p>'+
+    '</div>'+
+    '<div class="order-actions">'+
+    '<button type="button" class="setup-primary-btn" id="printManageXBill">Print / Save PDF</button>'+
+    '<button type="button" class="setup-secondary-btn" id="shareManageXBill">WhatsApp</button>'+
+    (pending>0?'<button type="button" class="small-primary-button" id="collectBillPayment">Collect '+money(pending)+'</button>':"")+
+    '</div>'+
+    '</div>';
+
+  document.body.appendChild(modal);
+
+  $("closeBill").onclick=function(){
+    modal.remove();
+  };
+
+  $("printManageXBill").onclick=function(){
+    window.print();
+  };
+
+  $("shareManageXBill").onclick=function(){
+    shareWhatsApp(order);
+  };
+
+  const collect=$("collectBillPayment");
+  if(collect){
+    collect.onclick=function(){
+      modal.remove();
+      collectPayment(order.id);
+    };
+  }
+}
+
+function shareWhatsApp(order){
+  const db=getDB();
+  const b=db.business||{};
+  const phone=cleanPhone(order.customerPhone||b.whatsappNumber||b.phoneNumber);
+
+  if(!phone){
+    toast("Customer WhatsApp number is missing");
+    return;
+  }
+
+  const text=
+    "*"+(b.businessName||"ManageX Business")+"*\n"+
+    "Order: "+order.orderNumber+"\n"+
+    "Customer: "+order.customerName+"\n"+
+    "Total: "+money(order.total)+"\n"+
+    "Received: "+money(paymentReceived(order))+"\n"+
+    "Balance: "+money(paymentPending(order))+"\n"+
+    "Thank you!";
+
+  window.open("https://wa.me/"+phone+"?text="+encodeURIComponent(text),"_blank");
+}
+
+function showCustomer(id){
+  const db=getDB();
+  const customer=db.customers.find(c=>c.id===id);
+  if(!customer)return;
+
+  const orders=db.orders.filter(function(o){
+    return cleanPhone(o.customerPhone)===cleanPhone(customer.phone);
+  });
+
+  const modal=document.createElement("div");
+  modal.id="managexCustomerModal";
+  modal.className="managex-modal show";
+
+  modal.innerHTML=
+    '<div class="modal-card">'+
+    '<div class="modal-head"><div><span class="page-eyebrow">CUSTOMER</span><h2>'+esc(customer.name)+'</h2><p>'+esc(customer.phone)+'</p></div><button type="button" class="modal-close" id="closeCustomer">×</button></div>'+
+    '<div class="customer-summary-grid">'+
+    '<div><span>Total Orders</span><strong>'+customer.totalOrders+'</strong></div>'+
+    '<div><span>Total Spending</span><strong>'+money(customer.totalSpending)+'</strong></div>'+
+    '<div><span>Pending</span><strong>'+money(customer.pendingAmount)+'</strong></div>'+
+    '</div>'+
+    '<div class="section-header"><h3>Order History</h3></div>'+
+    (orders.length?orders.map(function(o){
+      return '<div class="data-card"><div><strong>'+esc(o.orderNumber)+'</strong><p>'+new Date(o.createdAt).toLocaleDateString("en-IN")+' · '+orderStatus(o)+'</p></div><div><strong>'+money(o.total)+'</strong><button type="button" class="small-primary-button" data-customer-bill="'+esc(o.id)+'">View</button></div></div>';
+    }).join(""):"<p>No order history.</p>")+
+    '<button type="button" class="setup-primary-btn" id="customerNewOrder">New Order</button>'+
+    '</div>';
+
+  document.body.appendChild(modal);
+
+  $("closeCustomer").onclick=function(){
+    modal.remove();
+  };
+
+  $("customerNewOrder").onclick=function(){
+    modal.remove();
+    openNewOrder();
+  };
+
+  $$("[data-customer-bill]").forEach(function(btn){
+    btn.onclick=function(){
+      modal.remove();
+      showBill(btn.dataset.customerBill);
+    };
+  });
+}
+
+function openSettings(setting){
+  const db=getDB();
+  const b=db.business||{};
+  const s=db.settings||{};
+  const box=$("settingsContent");
+
+  if(!box)return;
+
+  if(setting==="business-profile"){
+    box.innerHTML=
+      '<div class="form-card">'+
+      '<h3>Business Profile</h3>'+
+      '<label>Business Name</label><input id="setBusinessName" class="mx-input" value="'+esc(b.businessName||"")+'">'+
+      '<label>Owner Name</label><input id="setOwnerName" class="mx-input" value="'+esc(b.ownerName||"")+'">'+
+      '<label>Phone</label><input id="setPhone" class="mx-input" value="'+esc(b.phoneNumber||"")+'">'+
+      '<label>WhatsApp</label><input id="setWhatsApp" class="mx-input" value="'+esc(b.whatsappNumber||"")+'">'+
+      '<label>Address</label><textarea id="setAddress" class="mx-input mx-textarea">'+esc(b.businessAddress||"")+'</textarea>'+
+      '<label>GSTIN</label><input id="setGST" class="mx-input" value="'+esc(b.gstin||"")+'">'+
+      '<label>Tagline</label><input id="setTagline" class="mx-input" value="'+esc(b.tagline||"")+'">'+
+      '<button type="button" class="setup-primary-btn" id="saveBusinessSettings">Save Profile</button>'+
+      '</div>';
+
+    $("saveBusinessSettings").onclick=function(){
+      const fresh=getDB();
+
+      fresh.business=Object.assign({},fresh.business||{},{
+        businessName:$("setBusinessName").value.trim(),
+        ownerName:$("setOwnerName").value.trim(),
+        phoneNumber:cleanPhone($("setPhone").value),
+        whatsappNumber:cleanPhone($("setWhatsApp").value)||cleanPhone($("setPhone").value),
+        businessAddress:$("setAddress").value.trim(),
+        gstin:$("setGST").value.trim().toUpperCase(),
+        tagline:$("setTagline").value.trim(),
+        updatedAt:new Date().toISOString()
+      });
+
+      saveDB(fresh);
+      updateBusinessUI();
+      toast("Business profile saved");
+    };
+  }
+
+  if(setting==="products"){
+    box.innerHTML=
+      '<div class="form-card"><h3>Products & Services</h3><p>Manage your catalog and prices.</p><button type="button" class="setup-primary-btn" id="settingsProductsBtn">Open Products</button></div>';
+
+    $("settingsProductsBtn").onclick=function(){
+      showPage("productsPage");
+    };
+  }
+
+  if(setting==="orders"){
+    box.innerHTML=
+      '<div class="form-card"><h3>Order Settings</h3>'+
+      '<label><input type="checkbox" id="setDelivery" '+(s.deliveryDate?"checked":"")+'> Enable delivery date</label>'+
+      '<label><input type="checkbox" id="setAdvance" '+(s.advancePayment?"checked":"")+'> Enable advance payment</label>'+
+      '<label><input type="checkbox" id="setNotes" '+(s.notes?"checked":"")+'> Enable notes</label>'+
+      '<button type="button" class="setup-primary-btn" id="saveOrderSettings">Save Settings</button></div>';
+
+    $("saveOrderSettings").onclick=function(){
+      const fresh=getDB();
+      fresh.settings.deliveryDate=$("setDelivery").checked;
+      fresh.settings.advancePayment=$("setAdvance").checked;
+      fresh.settings.notes=$("setNotes").checked;
+      saveDB(fresh);
+      toast("Order settings saved");
+    };
+  }
+
+  if(setting==="bills"){
+    box.innerHTML=
+      '<div class="form-card"><h3>Bill Settings</h3>'+
+      '<label>Bill Footer</label>'+
+      '<textarea id="setBillFooter" class="mx-input mx-textarea">'+esc(s.billFooter||"Thank you for your business.")+'</textarea>'+
+      '<label><input type="checkbox" id="setGST" '+(s.gst?"checked":"")+'> Enable GST field</label>'+
+      '<button type="button" class="setup-primary-btn" id="saveBillSettings">Save Settings</button></div>';
+
+    $("saveBillSettings").onclick=function(){
+      const fresh=getDB();
+      fresh.settings.billFooter=$("setBillFooter").value.trim();
+      fresh.settings.gst=$("setGST").checked;
+      saveDB(fresh);
+      toast("Bill settings saved");
+    };
+  }
+
+  if(setting==="appearance"){
+    box.innerHTML=
+      '<div class="form-card"><h3>Appearance</h3><p>ManageX appearance settings.</p><button type="button" class="setup-primary-btn" id="toggleThemeBtn">Toggle Theme</button></div>';
+
+    $("toggleThemeBtn").onclick=function(){
+      document.body.classList.toggle("dark-mode");
+      const fresh=getDB();
+      fresh.settings.theme=document.body.classList.contains("dark-mode")?"dark":"light";
+      saveDB(fresh);
+      toast("Appearance changed");
+    };
+        }
+
+  if(setting==="subscription"){
+    box.innerHTML=
+      '<div class="form-card">'+
+      '<h3>ManageX Subscription</h3>'+
+      '<p>Choose the plan that fits your business.</p>'+
+      '<div class="plan-card"><strong>Free</strong><p>₹0 · Basic business management</p></div>'+
+      '<div class="plan-card"><strong>Pro</strong><p>₹99/month · Advanced features</p></div>'+
+      '<div class="plan-card"><strong>Business</strong><p>₹199/month · Team features</p></div>'+
+      '<button type="button" class="setup-primary-btn" id="upgradePlanBtn">Upgrade</button>'+
+      '</div>';
+
+    $("upgradePlanBtn").onclick=function(){
+      toast("Secure payment integration will be connected later");
+    };
+  }
+}
+
+function bindDynamicActions(){
+  $$("[data-view-order]").forEach(function(btn){
+    btn.onclick=function(){
+      showBill(btn.dataset.viewOrder);
+    };
+  });
+
+  $$("[data-action='new-order']").forEach(function(btn){
+    btn.onclick=function(){
+      openNewOrder();
+    };
+  });
+
+  $$("[data-action='add-product']").forEach(function(btn){
+    btn.onclick=function(){
+      addProduct();
+    };
+  });
+
+  $$("[data-collect-order]").forEach(function(btn){
+    btn.onclick=function(){
+      collectPayment(btn.dataset.collectOrder);
+    };
+  });
+
+  $$("[data-edit-order]").forEach(function(btn){
+    btn.onclick=function(){
+      const order=getDB().orders.find(o=>o.id===btn.dataset.editOrder);
+      if(order)openNewOrder(order);
+    };
+  });
+
+  $$("[data-delete-order]").forEach(function(btn){
+    btn.onclick=function(){
+      deleteOrder(btn.dataset.deleteOrder);
+    };
+  });
+
+  $$("[data-edit-product]").forEach(function(btn){
+    btn.onclick=function(){
+      editProduct(btn.dataset.editProduct);
+    };
+  });
+
+  $$("[data-delete-product]").forEach(function(btn){
+    btn.onclick=function(){
+      deleteProduct(btn.dataset.deleteProduct);
+    };
+  });
+
+  $$("[data-customer]").forEach(function(btn){
+    btn.onclick=function(){
+      showCustomer(btn.dataset.customer);
+    };
+  });
+
+  $$("[data-customer-new]").forEach(function(btn){
+    btn.onclick=function(){
+      const c=getDB().customers.find(x=>x.id===btn.dataset.customerNew);
+      if(!c)return;
+      openNewOrder({
+        customerName:c.name,
+        customerPhone:c.phone,
+        items:[],
+        total:0,
+        amountReceived:0,
+        advance:0,
+        balance:0,
+        notes:"",
+        deliveryDate:""
+      });
+    };
+  });
+}
+
+function refreshAll(){
+  renderDashboard();
+  renderOrders();
+  renderCustomers();
+  renderProducts();
+}
+
+function initSetup(){
+  const grid=$("businessTypeGrid");
+
+  if(grid){
+    grid.addEventListener("click",function(event){
+      const card=event.target.closest(".business-type-card");
+      if(card)selectBusinessType(card);
+    });
+  }
+
+  const continueBtn=$("continueSetupBtn");
+
+  if(continueBtn){
+    continueBtn.addEventListener("click",continueSetup);
+  }
+}
+
+function initNavigation(){
+  $$(".nav-item").forEach(function(item){
+    item.addEventListener("click",function(){
+      const page=item.dataset.page;
+      if(page)showPage(page);
+    });
+  });
+
+  const viewOrders=$("viewOrdersBtn");
+  if(viewOrders){
+    viewOrders.addEventListener("click",function(){
+      showPage("ordersPage");
+    });
+  }
+
+  const newOrder=$("newOrderBtn");
+  if(newOrder){
+    newOrder.addEventListener("click",function(){
+      openNewOrder();
+    });
+  }
+
+  const notification=$("notificationBtn");
+  if(notification){
+    notification.addEventListener("click",function(){
+      toast("No new notifications");
+    });
+  }
+
+  $$("[data-action='new-order']").forEach(function(btn){
+    btn.addEventListener("click",function(){
+      openNewOrder();
+    });
+  });
+
+  $$("[data-action='add-product']").forEach(function(btn){
+    btn.addEventListener("click",function(){
+      addProduct();
+    });
+  });
+
+  const search=$("customerSearch");
+  if(search){
+    search.addEventListener("input",renderCustomers);
+  }
+
+  $$(".filter-chip").forEach(function(chip){
+    chip.addEventListener("click",function(){
+      state.orderFilter=chip.dataset.filter||"all";
+
+      $$(".filter-chip").forEach(function(c){
+        c.classList.remove("active");
+      });
+
+      chip.classList.add("active");
+      renderOrders();
+    });
+  });
+
+  $$(".settings-item").forEach(function(item){
+    item.addEventListener("click",function(){
+      openSettings(item.dataset.setting);
+    });
+  });
+}
+
+function loadBusiness(){
+  const db=getDB();
+
+  if(!db.business||!db.business.businessType){
+    openSetup();
+    return;
+  }
+
+  state.businessType=db.business.businessType;
+
+  $$(".business-type-card").forEach(function(card){
+    if(card.dataset.businessType===state.businessType){
+      card.classList.add("selected");
+    }
+  });
+
+  syncCustomers(db);
+  saveDB(db);
+
+  openMainApp();
+}
+
+function injectStyles(){
+  if($("managexRuntimeStyles"))return;
+
+  const style=document.createElement("style");
+  style.id="managexRuntimeStyles";
+
+  style.textContent=
+    ".managex-modal{position:fixed;inset:0;background:rgba(15,15,30,.48);display:flex;align-items:flex-end;justify-content:center;padding:12px;z-index:99999;opacity:0;pointer-events:none;transition:.2s}.managex-modal.show{opacity:1;pointer-events:auto}.managex-modal .modal-card{width:min(680px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:22px;padding:20px;box-shadow:0 20px 60px rgba(20,15,80,.22)}.managex-modal .modal-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:16px}.managex-modal .modal-head h2{margin:4px 0}.managex-modal .modal-close{border:0;background:#f1f1f7;width:38px;height:38px;border-radius:50%;font-size:25px;cursor:pointer}.managex-modal label{display:block;margin:12px 0 6px;font-weight:600}.managex-modal .mx-input{width:100%;box-sizing:border-box}.managex-modal .order-summary-box{margin:16px 0;padding:14px;border-radius:14px;background:#f7f7fc;line-height:1.8}.managex-modal .form-error{margin:10px 0}.managex-modal .bill-inner{background:#fff;border:1px solid rgba(23,23,42,.08);padding:18px;border-radius:14px}.managex-modal .bill-header{display:flex;justify-content:space-between;gap:15px}.managex-modal .bill-table{width:100%;border-collapse:collapse;margin:18px 0}.managex-modal .bill-table th,.managex-modal .bill-table td{padding:9px 5px;border-bottom:1px solid #eee;text-align:left}.managex-modal .bill-total{border-top:1px solid #ddd;padding-top:12px}.managex-modal .bill-footer{text-align:center;margin-top:20px;color:#666}.managex-modal .order-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.managex-modal .customer-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}.managex-modal .customer-summary-grid>div{background:#f7f7fc;border-radius:14px;padding:13px}.managex-modal .customer-summary-grid span{display:block;font-size:12px;color:#6b6b7a}.managex-modal .customer-summary-grid strong{display:block;margin-top:5px;font-size:18px}.plan-card{padding:16px;margin:10px 0;border:1px solid rgba(23,23,42,.08);border-radius:16px;background:#fff}.plan-card strong{font-size:17px}.plan-card p{margin:5px 0 0;color:#6b6b7a}@media(max-width:520px){.managex-modal{padding:7px}.managex-modal .modal-card{padding:16px}.managex-modal .customer-summary-grid{grid-template-columns:1fr}}";
+
+  document.head.appendChild(style);
+}
+
+function init(){
+  injectStyles();
+  initSetup();
+  initNavigation();
+  loadBusiness();
+  refreshAll();
+}
+
+document.addEventListener("DOMContentLoaded",init);
+                    
