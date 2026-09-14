@@ -3,7 +3,7 @@ const CFG={types:["Tailoring","Salon","Restaurant","Retail Shop","Electronics","
 let data={business:null,products:[],orders:[],settings:{orderDeliveryDate:true,orderAdvance:true,orderNotes:true,billGst:true,billFooter:"Thank you for your business!"}};
 function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||"{}");data={...data,...x,settings:{...data.settings,...(x.settings||{})};data.products=Array.isArray(data.products)?data.products:[];data.orders=Array.isArray(data.orders)?data.orders:[];}catch(e){}}
 function save(){localStorage.setItem(KEY,JSON.stringify(data))}
-function $(id){return document.getElementById(id)}
+function $(id){return document.getElementById(id)} 
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 function money(v){return "₹"+Number(v||0).toLocaleString("en-IN")}
 function today(){return new Date().toISOString().slice(0,10)}
