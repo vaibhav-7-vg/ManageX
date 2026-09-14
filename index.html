@@ -59,87 +59,64 @@
 <button type="button" class="business-type-card" data-business-type="manufacturing"><div class="business-icon">MF</div><strong>Manufacturing</strong><small>Production business</small></button>
 <button type="button" class="business-type-card" data-business-type="fabrication-welding"><div class="business-icon">FB</div><strong>Fabrication / Welding</strong><small>Workshop services</small></button>
 <button type="button" class="business-type-card" data-business-type="machine-workshop"><div class="business-icon">MW</div><strong>Machine Workshop</strong><small>Machining services</small></button>
-<button type="button" class="business-type-card" data-business-type="other"><div class="business-icon">OT</div><strong>Other Business</strong><small>Custom setup</small></button>
+<button type="button" class="business-type-card" data-business-type="other"><div class="business-icon">OT</div><strong>Other Business</strong><small>Use custom setup</small></button>
 </div>
 <div id="businessTypeError" class="form-error"></div>
-<button type="button" id="continueBusinessBtn" class="setup-primary-btn">Continue</button>
 </div>
+<button type="button" id="continueSetupBtn" class="setup-primary-btn">Continue</button>
 </div>
 <div id="detailsStep" class="setup-card" style="display:none;">
-<div class="setup-heading"><span class="setup-eyebrow">BUSINESS PROFILE</span><h2>Tell us about your business</h2><p>These details will be used across your dashboard, bills and customer communication.</p></div>
-<div class="form-section">
-<label>Business Name <span>*</span></label><input id="businessName" class="mx-input" type="text" placeholder="e.g. Vijay Tailor's">
-<label>Owner Name <span>*</span></label><input id="ownerName" class="mx-input" type="text" placeholder="Owner name">
-<label>Phone Number <span>*</span></label><input id="phoneNumber" class="mx-input" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number">
-<label>WhatsApp Number</label><input id="whatsappNumber" class="mx-input" type="tel" inputmode="numeric" maxlength="10" placeholder="Leave blank to use phone number">
-<label>Business Address</label><textarea id="businessAddress" class="mx-input mx-textarea" rows="3" placeholder="Business address"></textarea>
-<label>GSTIN</label><input id="gstin" class="mx-input" type="text" maxlength="15" placeholder="15-character GSTIN">
-<label>Tagline</label><input id="tagline" class="mx-input" type="text" placeholder="Your business tagline">
-<div id="profileError" class="form-error"></div>
-<button type="button" id="backToBusinessBtn" class="setup-secondary-btn">Back</button>
-<button type="button" id="finishSetupBtn" class="setup-primary-btn">Finish Setup</button>
+<div class="setup-heading"><span class="setup-eyebrow">BUSINESS DETAILS</span><h2>Set up your business</h2><p>Add the basic information that will appear across ManageX.</p></div>
+<div class="setup-form-grid">
+<div class="input-group"><label>Business Name <span>*</span></label><input id="businessName" class="mx-input" type="text" placeholder="Your business name"></div>
+<div class="input-group"><label>Owner Name</label><input id="ownerName" class="mx-input" type="text" placeholder="Owner name"></div>
+<div class="input-group"><label>Phone</label><input id="businessPhone" class="mx-input" type="tel" inputmode="numeric" placeholder="Business phone"></div>
+<div class="input-group"><label>WhatsApp Number</label><input id="businessWhatsapp" class="mx-input" type="tel" inputmode="numeric" placeholder="WhatsApp number"></div>
+<div class="input-group full"><label>Address</label><textarea id="businessAddress" class="mx-input" rows="3" placeholder="Business address"></textarea></div>
+<div class="input-group"><label>GSTIN</label><input id="businessGstin" class="mx-input" type="text" placeholder="GSTIN (optional)"></div>
+<div class="input-group"><label>Tagline</label><input id="businessTagline" class="mx-input" type="text" placeholder="Your business tagline"></div>
 </div>
+<div id="detailsError" class="form-error"></div>
+<div class="setup-actions"><button type="button" id="backSetupBtn" class="secondary-button">Back</button><button type="button" id="saveBusinessBtn" class="setup-primary-btn">Start ManageX</button></div>
 </div>
 </div>
 </section>
 <section id="mainApp" class="main-app" style="display:none;">
 <header class="app-header">
-<div class="brand-area"><div class="brand-logo">MX</div><div class="brand-text"><strong>ManageX</strong><span id="headerBusinessType">Business Manager</span></div></div>
+<div class="brand-area"><div class="brand-logo">MX</div><div class="brand-text"><strong>ManageX</strong><span id="headerBusinessName">Business Manager</span></div></div>
 <button type="button" class="icon-button" id="notificationBtn" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg></button>
 </header>
 <main class="main-content">
 <section id="homePage" class="app-page active-page">
-<div class="page-heading"><span class="page-eyebrow">DASHBOARD</span><h1>Overview</h1><p id="dashboardWelcome">Manage your business from one place.</p></div>
+<div class="page-heading"><span class="page-eyebrow">DASHBOARD</span><h1>Overview</h1><p id="dashboardGreeting">Manage your business from one place.</p></div>
 <div class="new-order-card"><div><div class="card-eyebrow">QUICK ACTION</div><h2>Create a new order</h2><p>Add a customer, products and payment.</p></div><button type="button" class="primary-button" id="newOrderBtn" data-action="new-order">New Order</button></div>
 <div class="section-header"><h2>Business Overview</h2></div>
 <div class="stats-grid">
 <div class="stat-card"><span>Total Orders</span><strong id="totalOrders">0</strong></div>
-<div class="stat-card"><span>Pending</span><strong id="pendingOrders">0</strong></div>
+<div class="stat-card"><span>Pending Orders</span><strong id="pendingOrders">0</strong></div>
 <div class="stat-card"><span>Completed</span><strong id="completedOrders">0</strong></div>
 <div class="stat-card"><span>Total Sales</span><strong id="totalSales">₹0</strong></div>
 </div>
 <div class="section-header"><h2>Payment Summary</h2></div>
 <div class="payment-card"><div class="payment-main"><div><span>Amount Received</span><strong id="amountReceived">₹0</strong></div><div><span>Amount Pending</span><strong id="amountPending">₹0</strong></div></div><div class="payment-progress"><div id="paymentProgress" class="payment-progress-fill"></div></div></div>
 <div class="section-header"><h2>Recent Orders</h2><button type="button" class="text-button" id="viewOrdersBtn">View All</button></div>
-<div id="recentOrdersList" class="dynamic-list"><div class="empty-state"><div class="empty-icon">ORD</div><h3>No orders yet</h3><p>Your recent orders will appear here.</p></div></div>
+<div id="recentOrdersList"></div>
 </section>
 <section id="ordersPage" class="app-page">
 <div class="page-heading"><span class="page-eyebrow">SALES</span><h1>Orders</h1><p>Track and manage customer orders.</p></div>
+<div class="orders-toolbar"><button type="button" class="small-primary-button" data-action="new-order">New Order</button></div>
 <div class="filter-row"><button type="button" class="filter-chip active" data-filter="all">All</button><button type="button" class="filter-chip" data-filter="pending">Pending</button><button type="button" class="filter-chip" data-filter="completed">Completed</button></div>
-<div id="ordersList" class="dynamic-list"></div>
+<div id="ordersList"></div>
 </section>
 <section id="customersPage" class="app-page">
 <div class="page-heading"><span class="page-eyebrow">CUSTOMER MANAGEMENT</span><h1>Customers</h1><p>Keep customer information and order history organized.</p></div>
 <div class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input type="search" id="customerSearch" placeholder="Search customers..."></div>
-<div id="customersList" class="dynamic-list"></div>
+<div id="customersList"></div>
 </section>
 <section id="productsPage" class="app-page">
 <div class="page-heading"><span class="page-eyebrow">CATALOG</span><h1>Products & Services</h1><p>Manage everything you sell or provide.</p></div>
-<div class="action-card"><div><h3>Your catalog</h3><p id="catalogDescription">Add products or services with their prices.</p></div><button type="button" class="small-primary-button" id="addProductBtn">Add</button></div>
-<div id="productsList" class="dynamic-list"></div>
-</section>
-<section id="newOrderPage" class="app-page">
-<div class="page-heading"><span class="page-eyebrow">SALES</span><h1>New Order</h1><p>Create a professional customer order.</p></div>
-<div class="form-card">
-<label>Customer Name *</label><input id="orderCustomerName" class="mx-input" type="text" placeholder="Customer name">
-<label>Mobile / WhatsApp *</label><input id="orderCustomerPhone" class="mx-input" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit number">
-<div class="order-item-form"><label>Product / Service</label><select id="orderProduct" class="mx-input"></select><label>Quantity</label><input id="orderQuantity" class="mx-input" type="number" min="1" value="1"><label>Price</label><input id="orderPrice" class="mx-input" type="number" min="0" step="0.01" placeholder="0"></div>
-<button type="button" class="small-primary-button" id="addOrderItemBtn">Add Item</button>
-<div id="orderItemsList" class="dynamic-list"></div>
-<label>Notes</label><textarea id="orderNotes" class="mx-input mx-textarea" rows="3" placeholder="Order notes"></textarea>
-<label>Delivery Date</label><input id="orderDeliveryDate" class="mx-input" type="date">
-<label>Advance Payment</label><input id="orderAdvance" class="mx-input" type="number" min="0" step="0.01" value="0">
-<div id="orderTotalPreview" class="summary-box">Total: ₹0 | Advance: ₹0 | Balance: ₹0</div>
-<div id="orderError" class="form-error"></div>
-<button type="button" class="setup-primary-btn" id="saveOrderBtn">Save Order</button>
-<button type="button" class="setup-secondary-btn" id="cancelOrderBtn">Cancel</button>
-</div>
-</section>
-<section id="billPage" class="app-page">
-<div class="page-heading"><span class="page-eyebrow">DOCUMENT</span><h1>Bill Preview</h1><p>Review your professional bill before sharing.</p></div>
-<div id="billPreview" class="bill-preview"></div>
-<button type="button" class="setup-primary-btn" id="printBillBtn">Print / Save as PDF</button>
-<button type="button" class="setup-secondary-btn" id="whatsappBillBtn">Share on WhatsApp</button>
+<div class="action-card"><div><h3>Your catalog</h3><p>Add products or services with their prices.</p></div><button type="button" class="small-primary-button" data-action="add-product">Add</button></div>
+<div id="productsList"></div>
 </section>
 <section id="settingsPage" class="app-page">
 <div class="page-heading"><span class="page-eyebrow">SETTINGS</span><h1>Settings</h1><p>Customize ManageX for your business.</p></div>
@@ -151,7 +128,6 @@
 <button type="button" class="settings-item" data-setting="appearance"><strong>Appearance</strong><span>Brand color and app appearance</span></button>
 <button type="button" class="settings-item" data-setting="subscription"><strong>Subscription</strong><span>Manage your ManageX plan</span></button>
 </div>
-<div id="settingsContent" class="settings-content"></div>
 </section>
 </main>
 <nav class="bottom-navigation">
@@ -159,9 +135,9 @@
 <button type="button" class="nav-item" data-page="ordersPage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h12v18H6z"/><path d="M9 7h6M9 11h6M9 15h4"/></svg><span>Orders</span></button>
 <button type="button" class="nav-item" data-page="customersPage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3"/><path d="M5 21a7 7 0 0 1 14 0"/></svg><span>Customers</span></button>
 <button type="button" class="nav-item" data-page="productsPage"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="2"/></svg><span>Products</span></button>
-<button type="button" class="nav-item" data-page="settingsPage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.7 1.7-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.04 1.56V20h-2.4v-.2a1.7 1.7 0 0 0-1.04-1.56 1.7 1.7 0 0 0-1.88.34l-.06.06-1.7-1.7.06-.06A1.7 1.7 0 0 0 8.44 15a1.7 1.7 0 0 0-1.56-1.04H6v-2.4h.88A1.7 1.7 0 0 0 8.44 10a1.7 1.7 0 0 0-.34-1.88l-.06-.06 1.7-1.7.06.06A1.7 1.7 0 0 0 10 6.76a1.7 1.7 0 0 0 1.04-1.56V5h2.4v.2A1.7 1.7 0 0 0 16.16 6.76a1.7 1.7 0 0 0 1.88-.34l.06-.06 1.7 1.7-.06.06A1.7 1.7 0 0 0 19.4 10a1.7 1.7 0 0 0 1.56 1.04H22v2.4h-1.04A1.7 1.7 0 0 0 19.4 15z"/></svg><span>Settings</span></button>
+<button type="button" class="nav-item" data-page="settingsPage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.7 1.7-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.04 1.56V20h-2.4v-.2a1.7 1.7 0 0 0-1.04-1.56 1.7 1.7 0 0 0-1.88.34l-.06.06-1.7-1.7.06-.06A1.7 1.7 0 0 0 8.44 15a1.7 1.7 0 0 0-1.56-1.04H6v-2.4h.88A1.7 1.7 0 0 0 8.44 10a1.7 1.7 0 0 0-.34-1.88l-.06-.06 1.7-1.7.06.06A1.7 1.7 0 0 0 11.72 6.76 1.7 1.7 0 0 0 12.76 5.2V5h2.4v.2a1.7 1.7 0 0 0 1.04 1.56 1.7 1.7 0 0 0 1.88-.34l.06-.06 1.7 1.7-.06.06A1.7 1.7 0 0 0 19.4 10a1.7 1.7 0 0 0 1.56 1.04H22v2.4h-1.04A1.7 1.7 0 0 0 19.4 15z"/></svg><span>Settings</span></button>
 </nav>
 </section>
-<script src="app.js?v=5"></script>
+<script src="app.js?v=6"></script>
 </body>
-  </html>
+                                                                                                                                                                                                                  </html>
