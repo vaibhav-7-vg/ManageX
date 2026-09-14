@@ -1,41 +1,40 @@
 /* =====================================================
    MANAGEX
-   GLOBAL DESIGN SYSTEM
-   PHASE 1 — FOUNDATION
+   PROFESSIONAL DESIGN SYSTEM
+   PHASE 2 — APP SHELL
    ===================================================== */
 
 
 /* =====================================================
    01. BRAND VARIABLES
-   DO NOT RANDOMLY CHANGE THESE.
    ===================================================== */
 
 :root {
 
   --mx-primary: #5B4BDB;
-
   --mx-primary-dark: #4338A8;
-
   --mx-accent: #7C6CF2;
 
   --mx-background: #F7F7FC;
-
   --mx-card: #FFFFFF;
 
   --mx-text: #17172A;
-
   --mx-secondary: #6B6B7A;
 
   --mx-success: #16A34A;
-
   --mx-warning: #F59E0B;
-
   --mx-danger: #EF4444;
+
+  --mx-border: rgba(23, 23, 42, 0.07);
 
   --mx-radius: 18px;
 
   --mx-shadow:
-    0 10px 30px rgba(34, 27, 100, 0.08);
+    0 8px 28px rgba(34, 27, 100, 0.07);
+
+  --mx-shadow-hover:
+    0 12px 32px rgba(34, 27, 100, 0.11);
+
 }
 
 
@@ -54,15 +53,18 @@
 }
 
 
-html,
-body {
+html {
 
   min-height: 100%;
+
+  scroll-behavior: smooth;
 
 }
 
 
 body {
+
+  min-height: 100%;
 
   font-family:
     Inter,
@@ -72,17 +74,20 @@ body {
     "Segoe UI",
     sans-serif;
 
-  background: var(--mx-background);
+  background:
+    var(--mx-background);
 
-  color: var(--mx-text);
+  color:
+    var(--mx-text);
 
-  -webkit-font-smoothing: antialiased;
+  -webkit-font-smoothing:
+    antialiased;
 
 }
 
 
 /* =====================================================
-   03. ELEMENT DEFAULTS
+   03. DEFAULT ELEMENTS
    ===================================================== */
 
 button,
@@ -101,33 +106,81 @@ button {
 
   cursor: pointer;
 
+  -webkit-tap-highlight-color:
+    transparent;
+
+}
+
+
+button:focus-visible,
+input:focus-visible {
+
+  outline:
+    3px solid
+    rgba(91, 75, 219, 0.22);
+
+  outline-offset: 2px;
+
 }
 
 
 /* =====================================================
-   04. HEADER
+   04. APP CONTAINER
+   ===================================================== */
+
+#app {
+
+  min-height: 100vh;
+
+  min-height: 100dvh;
+
+}
+
+
+/* =====================================================
+   05. TOP HEADER
    ===================================================== */
 
 .app-header {
 
+  position: sticky;
+
+  top: 0;
+
+  z-index: 50;
+
   width: 100%;
 
+  min-height: 72px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
   padding:
-    16px
-    20px;
+    14px
+    18px;
 
   background:
-    var(--mx-card);
+    rgba(255, 255, 255, 0.94);
+
+  backdrop-filter:
+    blur(18px);
+
+  -webkit-backdrop-filter:
+    blur(18px);
 
   border-bottom:
     1px solid
-    rgba(23, 23, 42, 0.06);
+    var(--mx-border);
 
 }
 
 
 /* =====================================================
-   05. BRAND
+   06. BRAND
    ===================================================== */
 
 .brand {
@@ -136,16 +189,18 @@ button {
 
   align-items: center;
 
-  gap: 10px;
+  gap: 11px;
 
 }
 
 
 .brand-logo {
 
-  width: 40px;
+  width: 42px;
 
-  height: 40px;
+  height: 42px;
+
+  flex-shrink: 0;
 
   display: flex;
 
@@ -153,7 +208,7 @@ button {
 
   justify-content: center;
 
-  border-radius: 12px;
+  border-radius: 13px;
 
   background:
     linear-gradient(
@@ -163,24 +218,42 @@ button {
       var(--mx-accent)
     );
 
-  color: white;
+  color:
+    #FFFFFF;
 
   font-size: 14px;
 
   font-weight: 900;
 
-  letter-spacing: -0.5px;
+  letter-spacing: -0.7px;
+
+  box-shadow:
+    0 6px 15px
+    rgba(91, 75, 219, 0.25);
+
+}
+
+
+.brand-text {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 1px;
 
 }
 
 
 .brand-name {
 
-  font-size: 21px;
+  font-size: 20px;
 
-  font-weight: 800;
+  line-height: 1.1;
 
-  letter-spacing: -0.6px;
+  font-weight: 850;
+
+  letter-spacing: -0.7px;
 
 }
 
@@ -193,32 +266,414 @@ button {
 }
 
 
-/* =====================================================
-   06. MAIN CONTENT
-   ===================================================== */
+.brand-subtitle {
 
-.main-content {
+  color:
+    var(--mx-secondary);
 
-  width: min(100%, 760px);
+  font-size: 10px;
 
-  margin: 0 auto;
+  font-weight: 650;
 
-  padding:
-    28px
-    18px
-    50px;
+  letter-spacing: 0.2px;
 
 }
 
 
 /* =====================================================
-   07. WELCOME CARD
+   07. HEADER ICON BUTTON
    ===================================================== */
 
-.welcome-card {
+.icon-button {
+
+  width: 42px;
+
+  height: 42px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 13px;
+
+  background:
+    #F4F3FB;
+
+  color:
+    var(--mx-text);
+
+}
+
+
+.icon-button svg {
+
+  width: 21px;
+
+  height: 21px;
+
+  fill: none;
+
+  stroke: currentColor;
+
+  stroke-width: 1.8;
+
+  stroke-linecap: round;
+
+  stroke-linejoin: round;
+
+}
+
+
+/* =====================================================
+   08. MAIN CONTENT
+   ===================================================== */
+
+.main-content {
+
+  width:
+    min(100%, 900px);
+
+  margin:
+    0 auto;
+
+  padding:
+    24px
+    18px
+    105px;
+
+}
+
+
+/* =====================================================
+   09. APPLICATION PAGES
+   ===================================================== */
+
+.app-page {
+
+  display: none;
+
+  animation:
+    pageIn 0.2s ease;
+
+}
+
+
+.app-page.active-page {
+
+  display: block;
+
+}
+
+
+@keyframes pageIn {
+
+  from {
+
+    opacity: 0;
+
+    transform:
+      translateY(5px);
+
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform:
+      translateY(0);
+
+  }
+
+}
+
+
+/* =====================================================
+   10. PAGE HEADING
+   ===================================================== */
+
+.page-heading {
+
+  margin-bottom:
+    24px;
+
+}
+
+
+.eyebrow {
+
+  margin-bottom:
+    7px;
+
+  color:
+    var(--mx-primary);
+
+  font-size: 11px;
+
+  font-weight: 850;
+
+  letter-spacing: 1.5px;
+
+}
+
+
+.page-heading h1 {
+
+  font-size:
+    clamp(28px, 7vw, 40px);
+
+  line-height:
+    1.08;
+
+  letter-spacing:
+    -1.2px;
+
+}
+
+
+.page-description {
+
+  margin-top:
+    7px;
+
+  color:
+    var(--mx-secondary);
+
+  font-size: 14px;
+
+  line-height:
+    1.5;
+
+}
+
+
+/* =====================================================
+   11. NEW ORDER CARD
+   ===================================================== */
+
+.new-order-card {
+
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  margin-bottom:
+    25px;
+
+  padding:
+    17px;
+
+  text-align: left;
+
+  border-radius:
+    var(--mx-radius);
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--mx-primary),
+      var(--mx-accent)
+    );
+
+  color:
+    #FFFFFF;
+
+  box-shadow:
+    0 10px 25px
+    rgba(91, 75, 219, 0.24);
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+
+}
+
+
+.new-order-card:active {
+
+  transform:
+    scale(0.985);
+
+}
+
+
+.new-order-icon {
+
+  width: 45px;
+
+  height: 45px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 14px;
+
+  background:
+    rgba(255, 255, 255, 0.17);
+
+}
+
+
+.new-order-icon svg {
+
+  width: 22px;
+
+  height: 22px;
+
+  fill: none;
+
+  stroke: currentColor;
+
+  stroke-width: 2;
+
+  stroke-linecap: round;
+
+}
+
+
+.new-order-content {
+
+  flex: 1;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+
+}
+
+
+.new-order-content strong {
+
+  font-size: 15px;
+
+  font-weight: 800;
+
+}
+
+
+.new-order-content span {
+
+  color:
+    rgba(255, 255, 255, 0.78);
+
+  font-size: 12px;
+
+}
+
+
+.arrow-icon {
+
+  width: 20px;
+
+  height: 20px;
+
+  flex-shrink: 0;
+
+  fill: none;
+
+  stroke: currentColor;
+
+  stroke-width: 2;
+
+  stroke-linecap: round;
+
+  stroke-linejoin: round;
+
+}
+
+
+/* =====================================================
+   12. SECTION HEADER
+   ===================================================== */
+
+.section-header {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin:
+    24px
+    0
+    12px;
+
+}
+
+
+.section-header h2 {
+
+  font-size: 17px;
+
+  font-weight: 800;
+
+  letter-spacing: -0.3px;
+
+}
+
+
+.text-button {
+
+  background: transparent;
+
+  color:
+    var(--mx-primary);
+
+  font-size: 13px;
+
+  font-weight: 750;
+
+}
+
+
+/* =====================================================
+   13. STAT GRID
+   ===================================================== */
+
+.stats-grid {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 12px;
+
+}
+
+
+.stat-card {
+
+  min-height: 145px;
+
+  padding: 16px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: space-between;
 
   background:
     var(--mx-card);
+
+  border:
+    1px solid
+    var(--mx-border);
 
   border-radius:
     var(--mx-radius);
@@ -226,65 +681,404 @@ button {
   box-shadow:
     var(--mx-shadow);
 
-  padding:
-    44px
-    24px;
+}
 
-  text-align: center;
+
+.stat-icon {
+
+  width: 37px;
+
+  height: 37px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 11px;
 
 }
 
 
-/* =====================================================
-   08. EYEBROW
-   ===================================================== */
+.stat-icon svg {
 
-.eyebrow {
+  width: 19px;
 
-  margin-bottom: 12px;
+  height: 19px;
+
+  fill: none;
+
+  stroke: currentColor;
+
+  stroke-width: 1.8;
+
+  stroke-linecap: round;
+
+  stroke-linejoin: round;
+
+}
+
+
+.stat-icon.purple {
+
+  background:
+    #EEEBFF;
 
   color:
     var(--mx-primary);
 
-  font-size: 12px;
+}
 
-  font-weight: 800;
 
-  letter-spacing: 1.6px;
+.stat-icon.orange {
+
+  background:
+    #FFF4DF;
+
+  color:
+    var(--mx-warning);
 
 }
 
 
-/* =====================================================
-   09. MAIN TITLE
-   ===================================================== */
+.stat-icon.green {
 
-.welcome-card h1 {
+  background:
+    #E9F8EF;
 
-  margin-bottom: 12px;
-
-  font-size:
-    clamp(40px, 11vw, 68px);
-
-  line-height: 1;
-
-  letter-spacing: -2.5px;
+  color:
+    var(--mx-success);
 
 }
 
 
-/* =====================================================
-   10. TAGLINE
-   ===================================================== */
+.stat-icon.blue {
 
-.tagline {
+  background:
+    #E9F3FF;
 
-  margin-bottom: 30px;
+  color:
+    #3478D5;
+
+}
+
+
+.stat-label {
+
+  margin-top:
+    12px;
 
   color:
     var(--mx-secondary);
 
-  font-size: 16px;
+  font-size: 12px;
+
+  font-weight: 600;
+
+}
+
+
+.stat-value {
+
+  margin-top:
+    3px;
+
+  font-size: 23px;
+
+  font-weight: 850;
+
+  letter-spacing: -0.7px;
+
+}
+
+
+/* =====================================================
+   14. PAYMENT CARD
+   ===================================================== */
+
+.payment-card {
+
+  margin-top:
+    12px;
+
+  padding:
+    18px;
+
+  background:
+    var(--mx-card);
+
+  border:
+    1px solid
+    var(--mx-border);
+
+  border-radius:
+    var(--mx-radius);
+
+  box-shadow:
+    var(--mx-shadow);
+
+}
+
+
+.payment-heading {
+
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+}
+
+
+.payment-heading > div {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+
+}
+
+
+.payment-heading span {
+
+  color:
+    var(--mx-secondary);
+
+  font-size: 12px;
+
+  font-weight: 650;
+
+}
+
+
+.payment-heading strong {
+
+  font-size: 22px;
+
+  font-weight: 850;
+
+}
+
+
+.payment-period {
+
+  padding:
+    6px
+    9px;
+
+  border-radius: 8px;
+
+  background:
+    #F4F3FB;
+
+  color:
+    var(--mx-secondary);
+
+  font-size: 10px;
+
+  font-weight: 700;
+
+}
+
+
+.payment-progress {
+
+  width: 100%;
+
+  height: 8px;
+
+  margin:
+    17px
+    0
+    13px;
+
+  overflow: hidden;
+
+  border-radius: 20px;
+
+  background:
+    #EEEAFB;
+
+}
+
+
+.payment-progress-received {
+
+  height: 100%;
+
+  border-radius: inherit;
+
+  background:
+    var(--mx-primary);
+
+}
+
+
+.payment-legend {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+}
+
+
+.payment-legend > div {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  color:
+    var(--mx-secondary);
+
+  font-size: 11px;
+
+}
+
+
+.payment-legend strong {
+
+  margin-left: 2px;
+
+  color:
+    var(--mx-text);
+
+}
+
+
+.legend-dot {
+
+  width: 7px;
+
+  height: 7px;
+
+  border-radius: 50%;
+
+}
+
+
+.legend-dot.received {
+
+  background:
+    var(--mx-primary);
+
+}
+
+
+.legend-dot.pending {
+
+  background:
+    #D8D5E8;
+
+}
+
+
+/* =====================================================
+   15. EMPTY STATES
+   ===================================================== */
+
+.empty-state {
+
+  min-height: 230px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+
+  padding:
+    25px;
+
+  text-align: center;
+
+  background:
+    var(--mx-card);
+
+  border:
+    1px dashed
+    rgba(91, 75, 219, 0.18);
+
+  border-radius:
+    var(--mx-radius);
+
+}
+
+
+.empty-icon {
+
+  width: 50px;
+
+  height: 50px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  margin-bottom: 6px;
+
+  border-radius: 15px;
+
+  background:
+    #F0EEFF;
+
+  color:
+    var(--mx-primary);
+
+}
+
+
+.empty-icon svg {
+
+  width: 23px;
+
+  height: 23px;
+
+  fill: none;
+
+  stroke: currentColor;
+
+  stroke-width: 1.7;
+
+  stroke-linecap: round;
+
+  stroke-linejoin: round;
+
+}
+
+
+.empty-state strong {
+
+  font-size: 15px;
+
+  font-weight: 800;
+
+}
+
+
+.empty-state span {
+
+  max-width: 280px;
+
+  color:
+    var(--mx-secondary);
+
+  font-size: 12px;
 
   line-height: 1.5;
 
@@ -292,85 +1086,636 @@ button {
 
 
 /* =====================================================
-   11. PRIMARY BUTTON
+   16. FILTER CHIPS
    ===================================================== */
 
-.primary-button {
+.filter-row {
 
-  width: 100%;
+  display: flex;
 
-  max-width: 300px;
+  gap: 8px;
 
-  min-height: 52px;
+  overflow-x: auto;
+
+  margin-bottom:
+    16px;
+
+  padding-bottom: 2px;
+
+}
+
+
+.filter-chip {
+
+  flex-shrink: 0;
 
   padding:
-    14px
-    22px;
+    9px
+    15px;
 
-  border-radius: 14px;
+  border-radius: 10px;
+
+  background:
+    var(--mx-card);
+
+  border:
+    1px solid
+    var(--mx-border);
+
+  color:
+    var(--mx-secondary);
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+}
+
+
+.filter-chip.active {
 
   background:
     var(--mx-primary);
 
-  color: white;
+  border-color:
+    var(--mx-primary);
 
-  font-weight: 750;
-
-  box-shadow:
-    0 8px 18px
-    rgba(91, 75, 219, 0.24);
-
-  transition:
-    transform 0.15s ease,
-    background 0.15s ease;
-
-}
-
-
-.primary-button:hover {
-
-  background:
-    var(--mx-primary-dark);
-
-}
-
-
-.primary-button:active {
-
-  transform:
-    scale(0.98);
+  color:
+    #FFFFFF;
 
 }
 
 
 /* =====================================================
-   12. TABLET / DESKTOP
+   17. SMALL PRIMARY BUTTON
    ===================================================== */
 
-@media (min-width: 700px) {
+.small-primary-button {
 
-  .app-header {
+  margin-top:
+    12px;
 
-    padding-left: 32px;
+  padding:
+    10px
+    16px;
 
-    padding-right: 32px;
+  border-radius: 10px;
+
+  background:
+    var(--mx-primary);
+
+  color:
+    #FFFFFF;
+
+  font-size: 12px;
+
+  font-weight: 750;
+
+}
+
+
+/* =====================================================
+   18. SEARCH BOX
+   ===================================================== */
+
+.search-box {
+
+  height: 48px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  margin-bottom:
+    18px;
+
+  padding:
+    0
+    14px;
+
+  background:
+    var(--mx-card);
+
+  border:
+    1px solid
+    var(--mx-border);
+
+  border-radius: 13px;
+
+}
+
+
+.search-box svg {
+
+  width: 19px;
+
+  height: 19px;
+
+  flex-shrink: 0;
+
+  fill: none;
+
+  stroke:
+    var(--mx-secondary);
+
+  stroke-width: 1.8;
+
+  stroke-linecap: round;
+
+}
+
+
+.search-box input {
+
+  width: 100%;
+
+  border: none;
+
+  outline: none;
+
+  background: transparent;
+
+  color:
+    var(--mx-text);
+
+  font-size: 13px;
+
+}
+
+
+.search-box input::placeholder {
+
+  color:
+    #9B9BA9;
+
+}
+
+
+/* =====================================================
+   19. ACTION CARD
+   ===================================================== */
+
+.action-card {
+
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  margin-bottom:
+    18px;
+
+  padding:
+    16px;
+
+  text-align: left;
+
+  background:
+    var(--mx-card);
+
+  border:
+    1px solid
+    var(--mx-border);
+
+  border-radius:
+    var(--mx-radius);
+
+  box-shadow:
+    var(--mx-shadow);
+
+}
+
+
+.action-icon {
+
+  width: 44px;
+
+  height: 44px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 13px;
+
+  background:
+    #F0EEFF;
+
+  color:
+    var(--mx-primary);
+
+}
+
+
+.action-icon svg {
+
+  width: 21px;
+
+  height: 21px;
+
+  fill: none;
+
+  stroke: currentColor;
+
+  stroke-width: 2;
+
+  stroke-linecap: round;
+
+}
+
+
+.action-card > div:nth-child(2) {
+
+  flex: 1;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+
+}
+
+
+.action-card strong {
+
+  font-size: 14px;
+
+  font-weight: 800;
+
+}
+
+
+.action-card span {
+
+  color:
+    var(--mx-secondary);
+
+  font-size: 11px;
+
+}
+
+
+/* =====================================================
+   20. SETTINGS
+   ===================================================== */
+
+.settings-list {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+
+}
+
+
+.settings-item {
+
+  width: 100%;
+
+  min-height: 70px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding:
+    12px
+    14px;
+
+  text-align: left;
+
+  background:
+    var(--mx-card);
+
+  border:
+    1px solid
+    var(--mx-border);
+
+  border-radius:
+    15px;
+
+  box-shadow:
+    var(--mx-shadow);
+
+}
+
+
+.settings-icon {
+
+  width: 40px;
+
+  height: 40px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 12px;
+
+  background:
+    #F0EEFF;
+
+  color:
+    var(--mx-primary);
+
+}
+
+
+.settings-icon svg {
+
+  width: 20px;
+
+  height: 20px;
+
+  fill: none;
+
+  stroke: currentColor;
+
+  stroke-width: 1.7;
+
+  stroke-linecap: round;
+
+  stroke-linejoin: round;
+
+}
+
+
+.settings-item > div:nth-child(2) {
+
+  flex: 1;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+
+}
+
+
+.settings-item strong {
+
+  font-size: 13px;
+
+  font-weight: 800;
+
+}
+
+
+.settings-item span {
+
+  color:
+    var(--mx-secondary);
+
+  font-size: 10px;
+
+}
+
+
+/* =====================================================
+   21. BOTTOM NAVIGATION
+   ===================================================== */
+
+.bottom-navigation {
+
+  position: fixed;
+
+  left: 0;
+
+  right: 0;
+
+  bottom: 0;
+
+  z-index: 100;
+
+  width: 100%;
+
+  min-height: 72px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(5, 1fr);
+
+  padding:
+    7px
+    8px
+    calc(7px + env(safe-area-inset-bottom));
+
+  background:
+    rgba(255, 255, 255, 0.96);
+
+  backdrop-filter:
+    blur(18px);
+
+  -webkit-backdrop-filter:
+    blur(18px);
+
+  border-top:
+    1px solid
+    var(--mx-border);
+
+  box-shadow:
+    0 -8px 25px
+    rgba(34, 27, 100, 0.05);
+
+}
+
+
+.nav-item {
+
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 4px;
+
+  background:
+    transparent;
+
+  color:
+    #8A8A99;
+
+  border-radius: 12px;
+
+}
+
+
+.nav-item svg {
+
+  width: 21px;
+
+  height: 21px;
+
+  fill: none;
+
+  stroke: currentColor;
+
+  stroke-width: 1.7;
+
+  stroke-linecap: round;
+
+  stroke-linejoin: round;
+
+}
+
+
+.nav-item span {
+
+  font-size: 9px;
+
+  font-weight: 700;
+
+}
+
+
+.nav-item.active {
+
+  color:
+    var(--mx-primary);
+
+}
+
+
+/* =====================================================
+   22. DESKTOP
+   ===================================================== */
+
+@media (min-width: 800px) {
+
+  .main-content {
+
+    padding:
+      40px
+      28px
+      50px;
+
+  }
+
+
+  .stats-grid {
+
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+
+  }
+
+
+  .bottom-navigation {
+
+    position: fixed;
+
+    top: 72px;
+
+    bottom: 0;
+
+    left: 0;
+
+    width: 220px;
+
+    min-height: auto;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: flex-start;
+
+    gap: 6px;
+
+    padding:
+      18px
+      12px;
+
+    border-top: none;
+
+    border-right:
+      1px solid
+      var(--mx-border);
+
+    box-shadow: none;
+
+  }
+
+
+  .nav-item {
+
+    min-height: 48px;
+
+    flex-direction: row;
+
+    justify-content: flex-start;
+
+    gap: 12px;
+
+    padding:
+      0
+      14px;
+
+  }
+
+
+  .nav-item span {
+
+    font-size: 12px;
 
   }
 
 
   .main-content {
 
-    padding-top: 50px;
+    max-width:
+      calc(900px + 220px);
 
-  }
-
-
-  .welcome-card {
-
-    padding:
-      64px
-      40px;
+    padding-left:
+      248px;
 
   }
 
 }
+
+
+/* =====================================================
+   23. LARGE DESKTOP
+   ===================================================== */
+
+@media (min-width: 1200px) {
+
+  .main-content {
+
+    max-width:
+      1180px;
+
+    margin-left: 220px;
+
+    padding-left: 40px;
+
+    padding-right: 40px;
+
+  }
+
+   }
