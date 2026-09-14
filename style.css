@@ -195,4 +195,6 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .business-type-card{min-height:88px;padding:10px}
 .business-type-card strong{font-size:12px}
 .business-type-card small{font-size:9.5px}
+  .nav-item:last-child svg{width:21px;height:21px;stroke-width:1.8;transform:none}
+.nav-item:last-child.active svg{stroke-width:2.1;transform:scale(1.02)}
                                                                                                                                                                                                                                                            }
