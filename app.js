@@ -5,7 +5,7 @@ const money=n=>"₹"+Number(n||0).toLocaleString("en-IN",{minimumFractionDigits:
 const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
 function loadData(){try{const x=localStorage.getItem(MANAGEX.storageKey);if(x)state.data={...state.data,...JSON.parse(x)};}catch(e){console.error(e)}}
 function saveData(){localStorage.setItem(MANAGEX.storageKey,JSON.stringify(state.data));}
-function uid(p="mx"){return p+"_"+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function uid(p="mx"){return p+"_"+Date.now().toString(36)+Math.random().toString(36).slice(2,7)} 
 function today(){return new Date().toISOString().slice(0,10)}
 function toast(msg){let t=document.querySelector(".mx-toast");if(!t){t=document.createElement("div");t.className="mx-toast";document.body.appendChild(t)}t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200)}
 function paymentReceived(o){return Number(o.amountReceived??o.advance??0)}
