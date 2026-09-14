@@ -2,142 +2,132 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#5B4BDB">
 <meta name="description" content="ManageX — Manage your business. Your way.">
-<title>ManageX — Business Manager</title>
+<title>ManageX</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<section id="setupPage" class="setup-page">
+<div id="setupPage" class="setup-page">
 <div class="setup-container">
-<div class="setup-brand"><div class="setup-logo">MX</div><div><h1>ManageX</h1><p>Manage your business. Your way.</p></div></div>
+<div class="brand-area">
+<div class="brand-logo">MX</div>
+<h1>ManageX</h1>
+<p>Manage your business. Your way.</p>
+</div>
 <div class="setup-progress">
-<div id="progressBusiness" class="progress-step active"><span>1</span><label>Business</label></div>
+<div class="progress-step active" id="progressBusiness"><span>1</span><b>Business</b></div>
 <div class="progress-line"></div>
-<div id="progressDetails" class="progress-step"><span>2</span><label>Details</label></div>
+<div class="progress-step" id="progressDetails"><span>2</span><b>Details</b></div>
 </div>
-<div id="businessStep" class="setup-card">
-<div class="setup-heading"><span class="setup-eyebrow">LET'S GET STARTED</span><h2>Choose your business type</h2><p>ManageX will use this to prepare the right workflow for your business.</p></div>
-<div class="form-section">
-<label>Business Type <span>*</span></label>
-<div id="businessTypeGrid" class="business-type-grid">
-<button type="button" class="business-type-card" data-business-type="general-store"><div class="business-icon">GS</div><strong>General Store</strong><small>Kirana & daily needs</small></button>
-<button type="button" class="business-type-card" data-business-type="supermarket"><div class="business-icon">SM</div><strong>Supermarket</strong><small>Retail & groceries</small></button>
-<button type="button" class="business-type-card" data-business-type="clothing-fashion"><div class="business-icon">CF</div><strong>Clothing & Fashion</strong><small>Fashion retail</small></button>
-<button type="button" class="business-type-card" data-business-type="footwear"><div class="business-icon">FW</div><strong>Footwear</strong><small>Shoes & footwear</small></button>
-<button type="button" class="business-type-card" data-business-type="electronics"><div class="business-icon">EL</div><strong>Electronics</strong><small>Electronic products</small></button>
-<button type="button" class="business-type-card" data-business-type="mobile-accessories"><div class="business-icon">MB</div><strong>Mobile & Accessories</strong><small>Phones & accessories</small></button>
-<button type="button" class="business-type-card" data-business-type="hardware"><div class="business-icon">HW</div><strong>Hardware</strong><small>Tools & materials</small></button>
-<button type="button" class="business-type-card" data-business-type="furniture"><div class="business-icon">FU</div><strong>Furniture</strong><small>Furniture sales</small></button>
-<button type="button" class="business-type-card" data-business-type="stationery"><div class="business-icon">ST</div><strong>Stationery</strong><small>Books & stationery</small></button>
-<button type="button" class="business-type-card" data-business-type="jewellery"><div class="business-icon">JW</div><strong>Jewellery</strong><small>Jewellery business</small></button>
-<button type="button" class="business-type-card" data-business-type="restaurant"><div class="business-icon">RE</div><strong>Restaurant</strong><small>Food & dining</small></button>
-<button type="button" class="business-type-card" data-business-type="cafe"><div class="business-icon">CA</div><strong>Café</strong><small>Coffee & snacks</small></button>
-<button type="button" class="business-type-card" data-business-type="bakery"><div class="business-icon">BA</div><strong>Bakery</strong><small>Baked products</small></button>
-<button type="button" class="business-type-card" data-business-type="fast-food"><div class="business-icon">FF</div><strong>Fast Food</strong><small>Quick service food</small></button>
-<button type="button" class="business-type-card" data-business-type="catering-tiffin"><div class="business-icon">CT</div><strong>Catering / Tiffin</strong><small>Food orders</small></button>
-<button type="button" class="business-type-card" data-business-type="sweet-shop"><div class="business-icon">SS</div><strong>Sweet Shop</strong><small>Sweets & desserts</small></button>
-<button type="button" class="business-type-card" data-business-type="salon-barber"><div class="business-icon">SA</div><strong>Salon / Barber</strong><small>Hair & grooming</small></button>
-<button type="button" class="business-type-card" data-business-type="beauty-parlour"><div class="business-icon">BP</div><strong>Beauty Parlour</strong><small>Beauty services</small></button>
-<button type="button" class="business-type-card" data-business-type="spa"><div class="business-icon">SP</div><strong>Spa</strong><small>Wellness services</small></button>
-<button type="button" class="business-type-card" data-business-type="fitness-gym"><div class="business-icon">GY</div><strong>Fitness / Gym</strong><small>Fitness services</small></button>
-<button type="button" class="business-type-card" data-business-type="tailoring-boutique"><div class="business-icon">TL</div><strong>Tailoring / Boutique</strong><small>Clothing services</small></button>
-<button type="button" class="business-type-card" data-business-type="laundry"><div class="business-icon">LA</div><strong>Laundry</strong><small>Laundry & dry cleaning</small></button>
-<button type="button" class="business-type-card" data-business-type="mobile-repair"><div class="business-icon">MR</div><strong>Mobile Repair</strong><small>Phone servicing</small></button>
-<button type="button" class="business-type-card" data-business-type="computer-service"><div class="business-icon">CS</div><strong>Computer Service</strong><small>Computer & laptop</small></button>
-<button type="button" class="business-type-card" data-business-type="electronics-repair"><div class="business-icon">ER</div><strong>Electronics Repair</strong><small>Electronic servicing</small></button>
-<button type="button" class="business-type-card" data-business-type="automobile-garage"><div class="business-icon">AU</div><strong>Automobile / Garage</strong><small>Vehicle servicing</small></button>
-<button type="button" class="business-type-card" data-business-type="ac-appliance-service"><div class="business-icon">AC</div><strong>AC / Appliance Service</strong><small>Home appliances</small></button>
-<button type="button" class="business-type-card" data-business-type="home-services"><div class="business-icon">HS</div><strong>Home Services</strong><small>On-site services</small></button>
-<button type="button" class="business-type-card" data-business-type="printing-xerox"><div class="business-icon">PR</div><strong>Printing / Xerox</strong><small>Printing services</small></button>
-<button type="button" class="business-type-card" data-business-type="photography"><div class="business-icon">PH</div><strong>Photography</strong><small>Photo & video</small></button>
-<button type="button" class="business-type-card" data-business-type="graphic-design"><div class="business-icon">GD</div><strong>Graphic Design</strong><small>Creative services</small></button>
-<button type="button" class="business-type-card" data-business-type="digital-marketing"><div class="business-icon">DM</div><strong>Digital Marketing</strong><small>Marketing services</small></button>
-<button type="button" class="business-type-card" data-business-type="consultancy"><div class="business-icon">CO</div><strong>Consultancy</strong><small>Professional services</small></button>
-<button type="button" class="business-type-card" data-business-type="tuition-coaching"><div class="business-icon">TC</div><strong>Tuition / Coaching</strong><small>Education services</small></button>
-<button type="button" class="business-type-card" data-business-type="manufacturing"><div class="business-icon">MF</div><strong>Manufacturing</strong><small>Production business</small></button>
-<button type="button" class="business-type-card" data-business-type="fabrication-welding"><div class="business-icon">FB</div><strong>Fabrication / Welding</strong><small>Workshop services</small></button>
-<button type="button" class="business-type-card" data-business-type="machine-workshop"><div class="business-icon">MW</div><strong>Machine Workshop</strong><small>Machining services</small></button>
-<button type="button" class="business-type-card" data-business-type="other"><div class="business-icon">OT</div><strong>Other Business</strong><small>Use custom setup</small></button>
+<section id="businessStep" class="setup-card">
+<div class="section-title">
+<h2>Choose your business</h2>
+<p>ManageX adapts to the way your business works.</p>
 </div>
-<div id="businessTypeError" class="form-error"></div>
+<div id="businessTypeGrid" class="business-type-grid"></div>
+<div id="businessTypeError" class="error-message"></div>
+<button id="continueSetupBtn" class="primary-button">Continue</button>
+</section>
+<section id="detailsStep" class="setup-card hidden">
+<div class="section-title">
+<h2>Business details</h2>
+<p>Tell us a little about your business.</p>
 </div>
-<button type="button" id="continueSetupBtn" class="setup-primary-btn">Continue</button>
+<div class="form-grid">
+<label>Business Name *<input id="businessName" class="form-control" type="text" placeholder="Enter business name"></label>
+<label>Owner Name<input id="ownerName" class="form-control" type="text" placeholder="Enter owner name"></label>
+<label>Phone Number *<input id="businessPhone" class="form-control" type="tel" inputmode="numeric" placeholder="10-digit mobile number"></label>
+<label>WhatsApp Number<input id="businessWhatsapp" class="form-control" type="tel" inputmode="numeric" placeholder="WhatsApp number"></label>
+<label class="full-width">Business Address<input id="businessAddress" class="form-control" type="text" placeholder="Enter business address"></label>
+<label>GSTIN<input id="businessGstin" class="form-control" type="text" placeholder="Optional GSTIN"></label>
+<label>Tagline<input id="businessTagline" class="form-control" type="text" placeholder="Your business tagline"></label>
 </div>
-<div id="detailsStep" class="setup-card" style="display:none;">
-<div class="setup-heading"><span class="setup-eyebrow">BUSINESS DETAILS</span><h2>Set up your business</h2><p>Add the basic information that will appear across ManageX.</p></div>
-<div class="setup-form-grid">
-<div class="input-group"><label>Business Name <span>*</span></label><input id="businessName" class="mx-input" type="text" placeholder="Your business name"></div>
-<div class="input-group"><label>Owner Name</label><input id="ownerName" class="mx-input" type="text" placeholder="Owner name"></div>
-<div class="input-group"><label>Phone</label><input id="businessPhone" class="mx-input" type="tel" inputmode="numeric" placeholder="Business phone"></div>
-<div class="input-group"><label>WhatsApp Number</label><input id="businessWhatsapp" class="mx-input" type="tel" inputmode="numeric" placeholder="WhatsApp number"></div>
-<div class="input-group full"><label>Address</label><textarea id="businessAddress" class="mx-input" rows="3" placeholder="Business address"></textarea></div>
-<div class="input-group"><label>GSTIN</label><input id="businessGstin" class="mx-input" type="text" placeholder="GSTIN (optional)"></div>
-<div class="input-group"><label>Tagline</label><input id="businessTagline" class="mx-input" type="text" placeholder="Your business tagline"></div>
-</div>
-<div id="detailsError" class="form-error"></div>
-<div class="setup-actions"><button type="button" id="backSetupBtn" class="secondary-button">Back</button><button type="button" id="saveBusinessBtn" class="setup-primary-btn">Start ManageX</button></div>
-</div>
+<div id="detailsError" class="error-message"></div>
+<div class="form-buttons">
+<button id="backSetupBtn" class="secondary-button">Back</button>
+<button id="saveBusinessBtn" class="primary-button">Start ManageX</button>
 </div>
 </section>
-<section id="mainApp" class="main-app" style="display:none;">
+</div>
+</div>
+<div id="mainApp" class="main-app hidden">
 <header class="app-header">
-<div class="brand-area"><div class="brand-logo">MX</div><div class="brand-text"><strong>ManageX</strong><span id="headerBusinessName">Business Manager</span></div></div>
-<button type="button" class="icon-button" id="notificationBtn" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg></button>
+<div class="header-left">
+<div class="brand-logo small">MX</div>
+<div>
+<h1 id="headerBusinessName">ManageX</h1>
+<p>Business Manager</p>
+</div>
+</div>
+<button id="notificationBtn" class="icon-button" aria-label="Notifications">
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+</button>
 </header>
 <main class="main-content">
-<section id="homePage" class="app-page active-page">
-<div class="page-heading"><span class="page-eyebrow">DASHBOARD</span><h1>Overview</h1><p id="dashboardGreeting">Manage your business from one place.</p></div>
-<div class="new-order-card"><div><div class="card-eyebrow">QUICK ACTION</div><h2>Create a new order</h2><p>Add a customer, products and payment.</p></div><button type="button" class="primary-button" id="newOrderBtn" data-action="new-order">New Order</button></div>
-<div class="section-header"><h2>Business Overview</h2></div>
+<section id="homePage" class="app-page active">
+<div class="page-heading">
+<div>
+<p id="dashboardGreeting" class="eyebrow">Business overview</p>
+<h2>Dashboard</h2>
+</div>
+<button id="newOrderBtn" class="primary-button compact">+ New Order</button>
+</div>
 <div class="stats-grid">
 <div class="stat-card"><span>Total Orders</span><strong id="totalOrders">0</strong></div>
 <div class="stat-card"><span>Pending Orders</span><strong id="pendingOrders">0</strong></div>
 <div class="stat-card"><span>Completed</span><strong id="completedOrders">0</strong></div>
 <div class="stat-card"><span>Total Sales</span><strong id="totalSales">₹0</strong></div>
 </div>
-<div class="section-header"><h2>Payment Summary</h2></div>
-<div class="payment-card"><div class="payment-main"><div><span>Amount Received</span><strong id="amountReceived">₹0</strong></div><div><span>Amount Pending</span><strong id="amountPending">₹0</strong></div></div><div class="payment-progress"><div id="paymentProgress" class="payment-progress-fill"></div></div></div>
-<div class="section-header"><h2>Recent Orders</h2><button type="button" class="text-button" id="viewOrdersBtn">View All</button></div>
-<div id="recentOrdersList"></div>
+<div class="payment-card">
+<div class="payment-card-head">
+<div><span>Payment Summary</span><h3>Money collected</h3></div>
+<strong id="paymentProgress">0%</strong>
+</div>
+<div class="payment-values">
+<div><small>Received</small><b id="amountReceived">₹0</b></div>
+<div><small>Pending</small><b id="amountPending">₹0</b></div>
+</div>
+<div class="progress-bar"><i id="paymentProgressBar"></i></div>
+</div>
+<div class="section-heading"><h3>Recent Orders</h3><button id="viewOrdersBtn" class="text-button">View all</button></div>
+<div id="recentOrdersList" class="order-list"></div>
 </section>
 <section id="ordersPage" class="app-page">
-<div class="page-heading"><span class="page-eyebrow">SALES</span><h1>Orders</h1><p>Track and manage customer orders.</p></div>
-<div class="orders-toolbar"><button type="button" class="small-primary-button" data-action="new-order">New Order</button></div>
-<div class="filter-row"><button type="button" class="filter-chip active" data-filter="all">All</button><button type="button" class="filter-chip" data-filter="pending">Pending</button><button type="button" class="filter-chip" data-filter="completed">Completed</button></div>
-<div id="ordersList"></div>
+<div class="page-heading"><div><p class="eyebrow">Sales & payments</p><h2>Orders</h2></div><button class="primary-button compact" data-action="new-order">+ New Order</button></div>
+<div class="filter-tabs">
+<button class="filter-tab active" data-filter="all">All</button>
+<button class="filter-tab" data-filter="pending">Pending</button>
+<button class="filter-tab" data-filter="completed">Completed</button>
+</div>
+<div id="ordersList" class="order-list"></div>
 </section>
 <section id="customersPage" class="app-page">
-<div class="page-heading"><span class="page-eyebrow">CUSTOMER MANAGEMENT</span><h1>Customers</h1><p>Keep customer information and order history organized.</p></div>
-<div class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input type="search" id="customerSearch" placeholder="Search customers..."></div>
-<div id="customersList"></div>
+<div class="page-heading"><div><p class="eyebrow">Customer database</p><h2>Customers</h2></div></div>
+<div class="search-box">
+<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+<input id="customerSearch" type="search" placeholder="Search customers">
+</div>
+<div id="customersList" class="customer-list"></div>
 </section>
 <section id="productsPage" class="app-page">
-<div class="page-heading"><span class="page-eyebrow">CATALOG</span><h1>Products & Services</h1><p>Manage everything you sell or provide.</p></div>
-<div class="action-card"><div><h3>Your catalog</h3><p>Add products or services with their prices.</p></div><button type="button" class="small-primary-button" data-action="add-product">Add</button></div>
-<div id="productsList"></div>
+<div class="page-heading"><div><p class="eyebrow">Catalog</p><h2>Products & Services</h2></div><button class="primary-button compact" data-action="add-product">Add</button></div>
+<div id="productsList" class="product-list"></div>
 </section>
 <section id="settingsPage" class="app-page">
-<div class="page-heading"><span class="page-eyebrow">SETTINGS</span><h1>Settings</h1><p>Customize ManageX for your business.</p></div>
-<div class="settings-list">
-<button type="button" class="settings-item" data-setting="business-profile"><strong>Business Profile</strong><span>Business name, contact and address</span></button>
-<button type="button" class="settings-item" data-setting="products"><strong>Products & Services</strong><span>Manage your catalog and prices</span></button>
-<button type="button" class="settings-item" data-setting="orders"><strong>Order Settings</strong><span>Customize your order workflow</span></button>
-<button type="button" class="settings-item" data-setting="bills"><strong>Bill Settings</strong><span>Customize bills and receipts</span></button>
-<button type="button" class="settings-item" data-setting="appearance"><strong>Appearance</strong><span>Brand color and app appearance</span></button>
-<button type="button" class="settings-item" data-setting="subscription"><strong>Subscription</strong><span>Manage your ManageX plan</span></button>
-</div>
+<div class="page-heading"><div><p class="eyebrow">Configuration</p><h2>Settings</h2></div></div>
+<div id="settingsContent" class="settings-list"></div>
 </section>
 </main>
-<nav class="bottom-navigation">
-<button type="button" class="nav-item active" data-page="homePage"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 10.5 12 3l9 7.5v9a1.5 1.5 0 0 1-1.5 1.5H15v-6h-6v6H4.5A1.5 1.5 0 0 1 3 19.5z"/></svg><span>Home</span></button>
-<button type="button" class="nav-item" data-page="ordersPage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h12v18H6z"/><path d="M9 7h6M9 11h6M9 15h4"/></svg><span>Orders</span></button>
-<button type="button" class="nav-item" data-page="customersPage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3"/><path d="M5 21a7 7 0 0 1 14 0"/></svg><span>Customers</span></button>
-<button type="button" class="nav-item" data-page="productsPage"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="2"/></svg><span>Products</span></button>
-<button type="button" class="nav-item" data-page="settingsPage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.7 1.7-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.04 1.56V20h-2.4v-.2a1.7 1.7 0 0 0-1.04-1.56 1.7 1.7 0 0 0-1.88.34l-.06.06-1.7-1.7.06-.06A1.7 1.7 0 0 0 8.44 15a1.7 1.7 0 0 0-1.56-1.04H6v-2.4h.88A1.7 1.7 0 0 0 8.44 10a1.7 1.7 0 0 0-.34-1.88l-.06-.06 1.7-1.7.06.06A1.7 1.7 0 0 0 11.72 6.76 1.7 1.7 0 0 0 12.76 5.2V5h2.4v.2a1.7 1.7 0 0 0 1.04 1.56 1.7 1.7 0 0 0 1.88-.34l.06-.06 1.7 1.7-.06.06A1.7 1.7 0 0 0 19.4 10a1.7 1.7 0 0 0 1.56 1.04H22v2.4h-1.04A1.7 1.7 0 0 0 19.4 15z"/></svg><span>Settings</span></button>
+<nav class="bottom-nav">
+<button class="nav-item active" data-page="homePage"><span class="nav-icon">⌂</span><b>Home</b></button>
+<button class="nav-item" data-page="ordersPage"><span class="nav-icon">▤</span><b>Orders</b></button>
+<button class="nav-item" data-page="customersPage"><span class="nav-icon">◉</span><b>Customers</b></button>
+<button class="nav-item" data-page="productsPage"><span class="nav-icon">□</span><b>Products</b></button>
+<button class="nav-item" data-page="settingsPage"><span class="nav-icon">⚙</span><b>Settings</b></button>
 </nav>
-</section>
-<script src="app.js?v=6"></script>
+</div>
+<script src="app.js?v=7"></script>
 </body>
-                                                                                                                                                                                                                  </html>
+</html>
